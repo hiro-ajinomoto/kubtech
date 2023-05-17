@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package media.mobile;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/media/mobile;mobile";
+
+service MediaService {
+  rpc RetrieveMedia(RetrieveMediaReq) returns (RetrieveMediaRes);
+  // have to login to get media
+  // rpc PublicRetrieveMedia(PublicRetrieveMediaReq) returns (RetrieveMediaRes);
+  rpc PublicHomepage(PublicHomepageMediaReq) returns (PublicHomepageMediaRes);
+}
+
+message MediaInfo {
+  string          id            = 1;
+  string          title         = 2;
+  string          intro         = 3;
+  bool            is_public     = 4;
+  bool            is_premium    = 5;
+  string          video_url     = 6;
+  string          thumbnail_url = 7;
+  repeated string hashtags      = 8;
+  string          slug          = 9;
+}
+
+message PublicMediaInfo {
+  string          id            = 1;
+  string          title         = 2;
+  string          intro         = 3;
+  bool            is_public     = 4;
+  bool            is_premium    = 5;
+  string          thumbnail_url = 7;
+  repeated string hashtags      = 8;
+  string          slug          = 9;
+}
+
+message RetrieveMediaReq { string id = 1; }
+message PublicRetrieveMediaReq {
+  string id             = 1;
+  string partnership_id = 2;
+}
+message PublicHomepageMediaReq { string partnership_id = 1; }
+
+//================================= RESPONSES ==================================
+
+message RetrieveMediaRes {
+  MediaInfo          info           = 1;
+  repeated MediaInfo related_medias = 2;
+}
+message PublicHomepageMediaRes { repeated PublicMediaInfo medias = 1; }

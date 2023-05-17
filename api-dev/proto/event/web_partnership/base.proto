@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package event.web_partnership;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/web_partnership;web_partnership";
+
+message Url {
+  string label = 1;
+  string url   = 2;
+}
+
+enum MediaType {
+  INVALID = 0;
+  IMAGE   = 1;
+  VIDEO   = 2;
+  AUDIO   = 3;
+  URL     = 4;
+  PDF     = 5;
+  DOC     = 6;
+  OTHER   = 7;
+}
+
+message Media {
+  string    name       = 1;
+  MediaType media_type = 2;
+  string    source_url = 3;
+  string    thumbnail  = 4;
+  bool      is_cover   = 5;
+}
+
+message I18N {
+  string lang_code = 1;
+  string text      = 2;
+}

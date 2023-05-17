@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package event.web_inspector;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/web_inspector;web_inspector";
+
+service SeatMapService { rpc RetrieveSeatMap(RetrieveSeatMapReq) returns (RetrieveSeatMapRes); }
+
+enum LabelType {
+  LABEL_TYPE_INVALID   = 0;
+  LABEL_TYPE_CHARACTER = 1;
+  LABEL_TYPE_NUMBER    = 2;
+}
+
+//================================= TYPES ===================================
+
+message SeatMap {
+  string             id          = 1;
+  string             name        = 2;
+  string             description = 3;
+  string             map_picture = 4;
+  repeated SeatBlock blocks      = 5;
+}
+message SeatMapInfo {
+  string             id          = 1;
+  string             name        = 2;
+  string             description = 3;
+  string             map_picture = 4;
+  repeated SeatBlock blocks      = 5;
+  int64              created_at  = 6;
+  string             created_by  = 7;
+  int64              updated_at  = 8;
+  string             updated_by  = 9;
+}
+
+message SeatBlock {
+  string        id          = 1;
+  string        name        = 2;
+  string        color       = 3;
+  SeatLabel     row         = 4;
+  SeatLabel     col         = 5;
+  double        price       = 6;
+  Currency      currency    = 7;
+  Position      position    = 8;
+  string        description = 9;
+  repeated Seat seats       = 10;
+  string        seat_map_id = 11;
+}
+
+message SeatLabel {
+  int64     total_seat = 1;
+  LabelType label_type = 2;
+  string    start_with = 3;
+}
+
+message Currency {
+  string id   = 1;
+  string name = 2;
+  string code = 3;
+  string icon = 4;
+}
+
+message Position {
+  int64 x = 1;
+  int64 y = 2;
+}
+
+message Seat {
+  string   name     = 1;
+  Position position = 2;
+}
+
+//================================= REQUESTS ===================================
+
+message RetrieveSeatMapReq {
+  string id             = 1;
+  string partnership_id = 2;
+}
+
+//================================= RESPONSES ==================================
+
+message RetrieveSeatMapRes { SeatMapInfo info = 1; }

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package partner.backend;
+option  go_package = "./backend;backend";
+
+message Empty {}
+
+message Coordinates {
+  double lat  = 1;
+  double long = 2;
+}

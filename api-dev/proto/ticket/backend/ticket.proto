@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ticket.backend;
+;
+option go_package = "./backend;backend";
+import "ticket/backend/base.proto";
+
+service TicketService {
+  rpc GetTicketSeatIdByOrderId(GetTicketSeatIdByOrderIdReq) returns (GetTicketSeatIdByOrderIdRes);
+  rpc DeleteTicketByOrderId(DeleteTicketByOrderIdReq) returns (Empty);
+}
+
+///////////////////////////////////////// REQUEST ////////////////////////////////////////////////
+
+message DeleteTicketByOrderIdReq { string order_id = 1; }
+message GetTicketSeatIdByOrderIdReq { string order_id = 1; }
+
+///////////////////////////////////////// RESPONSE ////////////////////////////////////////////////
+
+message GetTicketSeatIdByOrderIdRes { repeated string seat_ids = 1; }

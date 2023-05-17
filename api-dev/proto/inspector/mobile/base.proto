@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+package inspector.mobile;
+option  go_package = "./mobile;mobile";
+
+message Empty {}

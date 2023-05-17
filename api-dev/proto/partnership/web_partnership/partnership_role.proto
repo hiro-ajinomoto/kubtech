@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package partnership.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+import "proto/partnership/web_partnership/base.proto";
+
+service PartnershipRoleService {
+  rpc ListAllRole(ListAllRoleReq) returns (ListAllRoleRes);
+  rpc ListAllPermission(ListPermissionReq) returns (ListPermissionRes);
+  rpc CreateRole(CreateRoleReq) returns (CreateRoleRes);
+  rpc UpdateRole(UpdateRoleReq) returns (Empty);
+  rpc DeleteRole(DeleteRoleReq) returns (Empty);
+  rpc AssignRole(AssignRoleReq) returns (Empty);
+  rpc UnassignRole(UnassignRoleReq) returns (Empty);
+}
+
+//================================= REQUESTS ===================================
+message Permission {
+  string          key   = 1;
+  repeated string paths = 2;
+  repeated string tags  = 3;
+}
+
+message Role {
+  string          id          = 1;
+  string          name        = 2;
+  repeated string permissions = 3;
+  string          code        = 4;
+}
+
+//================================= REQUESTS ===================================
+
+message ListAllRoleReq {}
+
+message ListPermissionReq {}
+
+message CreateRoleReq {
+  string          name        = 1;
+  repeated string permissions = 2;
+}
+
+message AssignRoleReq {
+  string partnership_user_id = 1;
+  string role_code           = 2;
+}
+
+message UnassignRoleReq {
+  string partnership_user_id = 1;
+  string role_code           = 2;
+}
+
+message UpdateRoleReq {
+  string          id          = 1;
+  string          name        = 2;
+  repeated string permissions = 3;
+}
+
+message DeleteRoleReq { string id = 1; }
+
+//================================= RESPONSES ==================================
+
+message ListAllRoleRes { repeated Role roles = 1; }
+
+message ListPermissionRes { repeated Permission permission = 1; }
+
+message CreateRoleRes { string id = 1; }

@@ -1,0 +1,158 @@
+syntax = "proto3";
+
+package product.mobile;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/product/mobile;mobile";
+
+import "product/mobile/base.proto";
+import "product/base.proto";
+
+service ProductService {
+  rpc RetrieveProduct(RetrieveProductReq) returns (RetrieveProductRes);
+  rpc ListProduct(ListProductReq) returns (ListProductRes);
+  rpc ListProductBySeats(ListProductBySeatsReq) returns (ListProductRes);
+
+  rpc PublicRetrieveProduct(PublicRetrieveProductReq) returns (PublicRetrieveProductRes);
+  rpc PublicListProduct(PublicListProductReq) returns (PublicListProductRes);
+}
+
+//=================================== TYPES ====================================
+
+enum ValueType {
+  VALUE_TYPE_INVALID = 0;
+  VALUE_TYPE_STRING  = 1;
+  VALUE_TYPE_INTEGER = 2;
+  VALUE_TYPE_FLOAT   = 3;
+  VALUE_TYPE_BOOLEAN = 4;
+}
+
+enum PurchaseType {
+  PURCHASE_TYPE_INVALID      = 0;
+  PURCHASE_TYPE_RENT_OR_SELL = 1;
+  PURCHASE_TYPE_RENT_ONLY    = 2;
+  PURCHASE_TYPE_SELL_ONLY    = 3;
+}
+
+enum ProductStatus {
+  PRODUCT_STATUS_INVALID     = 0;
+  PRODUCT_STATUS_PUBLISHED   = 1;
+  PRODUCT_STATUS_UNPUBLISHED = 2;
+  PRODUCT_STATUS_DRAFT       = 3;
+  PRODUCT_STATUS_DELETED     = 4;
+}
+
+message ProductInfo {
+  string                          id                   = 1;
+  int64                           created_at           = 2;
+  int64                           updated_at           = 3;
+  string                          created_by           = 4;
+  string                          updated_by           = 5;
+  string                          partnership_id       = 6;
+  string                          name                 = 7;
+  repeated string                 medias               = 8;
+  repeated string                 tags                 = 9;
+  int64                           available_start_time = 10;
+  int64                           available_end_time   = 11;
+  int64                           quantity             = 12;
+  string                          sku                  = 13;
+  double                          listed_price         = 14;
+  double                          discount_percent     = 15;
+  double                          price                = 16;
+  string                          barcode              = 17;
+  string                          uom                  = 18; // unit of measurement
+  ProductCurrencyInfo             currency             = 19;
+  string                          brand                = 20;
+  string                          description          = 21;
+  Boolean                         unlimited            = 22;
+  string                          country              = 23;
+  repeated DetailProductAttribute attributes           = 24;
+  PurchaseType                    purchase_type        = 25;
+  ProductStatus                   status               = 26;
+  string                          language             = 27;
+  bool                            in_booking           = 28;
+  map<string, string>             additional_data      = 29;
+  string                          partner_shop_id      = 30;
+  SeatInfo                        seat_info            = 31;
+}
+
+message ProductCurrencyInfo {
+  string id   = 1;
+  string name = 2;
+  string code = 3;
+  string icon = 4;
+}
+
+message BasicProductAttribute {
+  string master_data_id = 1;
+  string input_value    = 2;
+}
+
+message DetailProductAttribute {
+  string              master_data_id  = 1;
+  string              name            = 2;
+  string              value           = 3;
+  map<string, string> additional_data = 4;
+  string              type            = 5;
+  ValueType           value_type      = 6;
+}
+
+//================================= REQUESTS ===================================
+
+message ListProductReq {
+  string                 name        = 1;
+  map<string, string>    attributes  = 2;
+  double                 price_from  = 3; // skip if price_from < 0
+  double                 price_to    = 4; // skip if price_to < 0
+  repeated ProductStatus status      = 5;
+  PaginationReq          pagination  = 6;
+  repeated OrderByItem   order_by    = 7;
+  string                 search_text = 8;
+}
+
+message PublicListProductReq {
+  string               search         = 1;
+  PaginationReq        pagination     = 2;
+  repeated OrderByItem order_by       = 3;
+  string               partnership_id = 4;
+}
+
+message RetrieveProductReq { string id = 1; }
+
+message PublicRetrieveProductReq {
+  string id             = 1;
+  string partnership_id = 2;
+}
+
+message ListProductBySeatsReq {
+  string          event_id       = 1;
+  repeated string seat_block_ids = 2;
+  repeated string seat_ids       = 3;
+  PaginationReq   pagination     = 4;
+}
+
+//================================= RESPONSES ==================================
+
+message PublicRetrieveProductRes {
+  ProductInfo   info           = 1;
+  BookingStatus booking_status = 2;
+  bool          bought         = 3;
+  bool          rent           = 4;
+  int64         remaining_time = 5;
+}
+
+message PublicListProductRes {
+  repeated ProductInfo info       = 1;
+  PaginationRes        pagination = 2;
+}
+
+message RetrieveProductRes {
+  ProductInfo   info           = 1;
+  bool          bought         = 2;
+  bool          rent           = 3;
+  int64         remaining_time = 4;
+  BookingStatus booking_status = 5;
+}
+
+message ListProductRes {
+  repeated ProductInfo info       = 1;
+  PaginationRes        pagination = 2;
+}

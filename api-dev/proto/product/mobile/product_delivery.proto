@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package product.mobile;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/product/mobile;mobile";
+
+import "product/mobile/base.proto";
+
+service ProductDeliveryService {
+  rpc GetMyProductDelivery(GetMyProductDeliveryReq) returns (GetMyProductDeliveryRes);
+  rpc GetMyProductDeliveryByOrderId(GetMyProductDeliveryByOrderIdReq) returns (GetMyProductDeliveryByOrderIdRes);
+  rpc ListMyProductDeliveries(ListMyProductDeliveriesReq) returns (ListMyProductDeliveriesRes);
+}
+
+//=================================== TYPES ====================================
+enum QuantityDuration {
+  QUANTITY_DURATION_INVALID = 0;
+  QUANTITY_DURATION_MONTH   = 1;
+  QUANTITY_DURATION_QUATER  = 2;
+  QUANTITY_DURATION_YEAR    = 3;
+}
+
+message ProductDeliveryInfo {
+  string                         id                 = 1;
+  int64                          created_at         = 2;
+  int64                          updated_at         = 3;
+  string                         partnership_id     = 4;
+  ProductDeliveryProductInfo     product_info       = 5;
+  ProductDeliveryUserInfo        user_info          = 6;
+  ProductDeliveryOrderSimpleInfo order_info         = 7;
+  int64                          expired_time       = 8;
+  QuantityDuration               quantity_duration  = 9;
+  int64                          available_quantity = 10;
+  int64                          used_quantity      = 11;
+  int64                          remaining_time     = 12;
+}
+
+message ProductDeliveryProductInfo {
+  string id             = 1;
+  int64  created_at     = 2;
+  int64  updated_at     = 3;
+  string created_by     = 4;
+  string updated_by     = 5;
+  string partnership_id = 6;
+
+  string                      name                 = 7;
+  repeated string             tags                 = 8;
+  int64                       available_start_time = 9;
+  int64                       available_end_time   = 10;
+  int64                       quantity             = 11;
+  string                      sku                  = 12;
+  double                      listed_price         = 13;
+  double                      discount_percent     = 14;
+  double                      price                = 15;
+  string                      barcode              = 16;
+  string                      uom                  = 17; // unit of measurement
+  ProductDeliveryCurrencyInfo currency             = 18;
+  string                      brand                = 19;
+  Boolean                     unlimited            = 20;
+  map<string, string>         additional_data      = 21;
+  string                      partner_shop_id      = 22;
+  repeated string             medias               = 23;
+}
+
+message ProductDeliveryUserInfo {
+  string id              = 1;
+  string email           = 2;
+  string name            = 3;
+  string phone_number    = 4;
+  string phone_code      = 5;
+  string profile_picture = 6;
+  string addr            = 7;
+  string city            = 8;
+  string district        = 9;
+  string ward            = 10;
+  string description     = 11;
+}
+
+message ProductDeliveryOrderSimpleInfo {
+  string                        id             = 1;
+  string                        cart_id        = 2;
+  ProductOrderPaymentMethodInfo payment_method = 3;
+  string                        order_code     = 4;
+  string                        payment_id     = 5;
+}
+
+message ProductOrderPaymentMethodInfo {
+  string name           = 1;
+  string code           = 2;
+  int32  method         = 3;
+  double fee            = 4;
+  double additional_fee = 5;
+  string display_fee    = 6;
+  string icon           = 7;
+  string id             = 8;
+}
+
+message ProductDeliveryCurrencyInfo {
+  string id   = 1;
+  string name = 2;
+  string code = 3;
+  string icon = 4;
+}
+
+//================================= REQUESTS ===================================
+
+message GetMyProductDeliveryReq { string id = 1; }
+
+message GetMyProductDeliveryByOrderIdReq {
+  string        order_id   = 1;
+  PaginationReq pagination = 2;
+}
+
+message ListMyProductDeliveriesReq {}
+
+//================================= RESPONSE ===================================
+
+message GetMyProductDeliveryRes { ProductDeliveryInfo info = 1; }
+
+message GetMyProductDeliveryByOrderIdRes {
+  repeated ProductDeliveryInfo info       = 1;
+  PaginationRes                pagination = 2;
+}
+
+message ListMyProductDeliveriesRes { repeated ProductDeliveryInfo info = 1; }

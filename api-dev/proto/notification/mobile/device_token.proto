@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package notification.mobile;
+option  go_package = "./mobile;mobile";
+
+import "proto/notification/mobile/base.proto";
+
+service DeviceTokenSvc {
+  rpc RegisterDeviceToken(RegisterDeviceTokenReq) returns (Empty);
+  rpc DeregisterDeviceToken(DeregisterDeviceTokenReq) returns (Empty);
+}
+
+enum DeviceTokenStatus {
+  DEVICE_TOKEN_STATUS_INVALID  = 0;
+  DEVICE_TOKEN_STATUS_ACTIVE   = 1;
+  DEVICE_TOKEN_STATUS_INACTIVE = 2;
+}
+
+enum DevicePlatform {
+  DEVICE_PLATFORM_INVALID = 0;
+  DEVICE_PLATFORM_ANDROID = 1;
+  DEVICE_PLATFORM_IOS     = 2;
+  DEVICE_PLATFORM_WEB     = 3;
+}
+
+message DeviceToken {
+  string            id         = 1;
+  string            user_id    = 2;
+  string            device_id  = 3;
+  string            token      = 4;
+  DevicePlatform    platform   = 5;
+  DeviceTokenStatus status     = 6;
+  string            created_at = 7;
+  string            updated_at = 8;
+}
+
+message RegisterDeviceTokenReq {
+  string         device_id = 1;
+  string         token     = 2;
+  DevicePlatform platform  = 3;
+}
+
+message DeregisterDeviceTokenReq { string token = 1; }

@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package customer.backend;
+option  go_package = "./backend;backend";
+
+import "proto/customer/backend/base.proto";
+
+service CustomerLocationService {
+  rpc RetrieveCustomerLocation(RetrieveCustomerLocationReq) returns (RetrieveCustomerLocationRes);
+}
+
+//========================================= BASIC ==================================
+
+message CustomerLocationBasicInfo {
+  string      name              = 1;
+  string      description       = 2;
+  Coordinates coordinates       = 3;
+  string      unit              = 4;
+  string      number            = 5;
+  string      street            = 6;
+  string      ward              = 7;
+  string      district          = 8;
+  string      city              = 9;
+  string      region            = 10;
+  string      country           = 11;
+  string      postal_code       = 12;
+  string      full_address      = 13;
+  string      suburban          = 14;
+  string      user_full_name    = 15;
+  string      user_phone_code   = 16;
+  string      user_phone_number = 17;
+  string      customer_id       = 18;
+}
+
+message CustomerLocationInfo {
+  string                    id         = 1;
+  CustomerLocationBasicInfo info       = 2;
+  int64                     created_at = 3;
+  int64                     updated_at = 4;
+  string                    created_by = 5;
+  string                    updated_by = 6;
+}
+
+//======================================== REQUEST ==================================
+
+message RetrieveCustomerLocationReq { string id = 1; }
+
+//======================================== RESPONSE ==================================
+
+message RetrieveCustomerLocationRes { CustomerLocationInfo info = 1; }

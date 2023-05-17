@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package partner.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+import "proto/partner/web_partnership/base.proto";
+
+service PartnerUserService {
+  rpc GetMe(GetMeReq) returns (GetMeRes);
+  rpc ChangePassword(ChangePasswordReq) returns (Empty);
+
+  rpc CreatePartnerUser(CreatePartnerUserReq) returns (CreatePartnerUserRes);
+  rpc RetrievePartnerUser(RetrievePartnerUserReq) returns (RetrievePartnerUserRes);
+  rpc ListPartnerUser(ListPartnerUserReq) returns (ListPartnerUserRes);
+  rpc DisablePartnerUser(DisablePartnerUserReq) returns (Empty);
+  rpc DeletePartnerUser(DeletePartnerUserReq) returns (Empty);
+}
+
+//================================= TYPES ===================================
+
+message UserInfo {
+  string id              = 1;
+  int64  created_at      = 2;
+  int64  updated_at      = 3;
+  string created_by      = 4;
+  string updated_by      = 5;
+  string email           = 6;
+  string password        = 7;
+  string name            = 8;
+  string profile_picture = 9;
+  string partnership_id  = 10;
+  string phone_code      = 11;
+  string phone_number    = 12;
+  string partner_shop_id = 13;
+}
+
+//================================= REQUESTS ===================================
+
+message GetMeReq {}
+
+message ChangePasswordReq {
+  string old_password = 1;
+  string password     = 2;
+}
+
+message CreatePartnerUserReq {
+  string phone_code   = 1;
+  string phone_number = 2;
+  string password     = 3;
+  string name         = 4;
+}
+
+message RetrievePartnerUserReq { string id = 1; }
+
+message ListPartnerUserFilter { bool is_disable = 1; }
+
+message ListPartnerUserReq {
+  string                search         = 1;
+  PaginationReq         pagination     = 2;
+  repeated OrderByItem  order_by       = 3;
+  string                partnership_id = 4;
+  ListPartnerUserFilter filter         = 5;
+}
+
+message DisablePartnerUserReq { string id = 1; }
+
+message DeletePartnerUserReq { string id = 1; }
+
+//================================= RESPONSES ==================================
+
+message GetMeRes { UserInfo user_info = 1; }
+
+message CreatePartnerUserRes { string id = 1; }
+
+message RetrievePartnerUserRes { UserInfo user_info = 1; }
+
+message ListPartnerUserRes {
+  repeated UserInfo user_infos = 1;
+  PaginationRes     pagination = 2;
+}

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package partner.mobile;
+option  go_package = "./mobile;mobile";
+
+service PartnerService { rpc GetDocuments(GetDocumentsReq) returns (GetDocumentsRes); }
+
+//================================= REQUESTS ===================================
+
+message GetDocumentsReq {}
+
+//================================= RESPONSES ==================================
+
+message GetDocumentsRes { repeated string documents = 1; }

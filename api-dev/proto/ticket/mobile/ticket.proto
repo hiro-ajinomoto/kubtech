@@ -1,0 +1,257 @@
+syntax = "proto3";
+
+package ticket.mobile;
+option  go_package = "./mobile;mobile";
+
+import "ticket/mobile/base.proto";
+import "base/base.proto";
+
+service TicketService {
+  rpc UpdateUserInfo(UpdateUserInfoReq) returns (Empty);
+  rpc UpdateStatus(UpdateStatusReq) returns (Empty);
+  rpc UpdateEnableVerificationCode(UpdateEnableVerificationCodeReq)
+      returns (Empty); // update field is_enabled_verification_code
+
+  rpc GetMyTicket(GetMyTicketReq) returns (GetMyTicketRes);
+  rpc GetMyTicketByOrderId(GetMyTicketByOrderIdReq) returns (GetMyTicketByOrderIdRes);
+  rpc GetMyTickets(ListMyTicketReq) returns (GetMyTicketsRes);
+  rpc GetMyTicketByTransferTransactionId(GetMyTicketByTransferTransactionIdReq)
+      returns (GetMyTicketByTransferTransactionIdRes);
+  rpc GetMyTransferTransactionHistory(GetMyTransferTransactionHistoryReq) returns (GetMyTransferTransactionHistoryRes);
+
+  rpc ListMyTicketByStatus(ListMyTicketByStatusReq) returns (ListMyTicketByStatusRes);
+  rpc ListMyTicketByPriceBlock(ListMyTicketByPriceBlockReq) returns (ListMyTicketByPriceBlockRes);
+  rpc ListMyTicketReadyToCheckin(ListMyTicketReadyToCheckinReq) returns (ListMyTicketReadyToCheckinRes);
+
+  rpc MarkTicketOffline(MarkTicketOfflineReq) returns (Empty);
+
+  rpc GetMyTicketsByDeliveryID(GetMyTicketsByDeliveryIDReq) returns (GetMyTicketsByDeliveryIDRes);
+}
+
+//================================= TYPES ===================================
+
+enum TicketStatus {
+  TICKET_STATUS_INVALID    = 0;
+  TICKET_STATUS_NOT_USED   = 1;
+  TICKET_STATUS_CHECKED_IN = 2;
+}
+
+enum TicketStatusFilter {
+  TICKET_FILTER_STATUS_INVALID     = 0;
+  TICKET_FILTER_STATUS_NOT_USED    = 1;
+  TICKET_FILTER_STATUS_CHECKED_IN  = 2;
+  TICKET_FILTER_STATUS_TRANSFERRED = 3;
+}
+
+enum TicketType {
+  TICKET_TYPE_BUY      = 0;
+  TICKET_TYPE_RELEASE  = 1;
+  TICKET_TYPE_TRANSFER = 2;
+}
+
+message TicketInfo {
+  string          id                           = 1;
+  int64           created_at                   = 2;
+  int64           updated_at                   = 3;
+  string          order_id                     = 4;
+  TicketEventInfo event_info                   = 5;
+  TicketSeatInfo  seat_info                    = 6;
+  TicketStatus    status                       = 7;
+  string          secret_code                  = 8; // random
+  string          verification_code            = 9; // 6 số
+  TicketUserInfo  user_info                    = 10;
+  bool            is_enabled_verification_code = 11;
+  string          partnership_id               = 12;
+  TicketType      ticket_type                  = 13;
+  string          owner_id                     = 14;
+  bool            is_transferable_ticket       = 15;
+  string          transfer_transaction_id      = 16;
+}
+
+message TicketPriceSimpleInfo {
+  string             id       = 1;
+  string             name     = 2;
+  string             icon     = 3;
+  double             price    = 4;
+  TicketCurrencyInfo currency = 5;
+}
+
+message TicketCurrencyInfo {
+  string name = 1;
+  string code = 2;
+  string icon = 3;
+}
+
+message TicketEventLocation {
+  string id       = 1;
+  string address  = 2;
+  string ward     = 3;
+  string district = 4;
+  string city     = 5;
+  string country  = 6;
+}
+
+message TicketEventInfo {
+  string              event_id           = 1;
+  string              name               = 2;
+  int64               start_time         = 3;
+  int64               end_time           = 4;
+  int64               checkin_start_time = 5;
+  int64               checkin_end_time   = 6;
+  TicketEventLocation location           = 7;
+  string              timezone           = 8;
+  bool                checkin_ended      = 9;
+  string              schedule_id        = 10;
+}
+
+message TicketUserInfo {
+  string user_id              = 1;
+  string user_full_name       = 2;
+  string user_phone           = 3;
+  string user_email           = 4;
+  string user_address         = 5;
+  string user_image           = 6;
+  string user_phone_code      = 7;
+  bool   is_declared_covid    = 8;
+  string user_inspector_image = 9;
+}
+
+message TicketSeatInfo {
+  string                id                    = 1;
+  string                name                  = 2;
+  TicketPriceSimpleInfo price                 = 3;
+  string                price_block_id        = 4;
+  string                price_block_name      = 5;
+  string                general_seat_map_id   = 6;
+  string                general_seat_map_name = 7;
+  string                seat_type_name        = 8;
+}
+
+message TransferTicket {
+  string id                    = 1;
+  string event_id              = 2;
+  string seat_id               = 3;
+  string seat_name             = 4;
+  double price                 = 5;
+  string price_block_id        = 6;
+  string price_block_name      = 7;
+  string general_seat_map_id   = 8;
+  string general_seat_map_name = 9;
+  string seat_type_name        = 10;
+  string currency_code         = 11;
+}
+
+message TransferTransaction {
+  string                  id      = 1;
+  repeated TransferTicket tickets = 2;
+  string                  from    = 3;
+  string                  to      = 4;
+}
+
+//================================= REQUESTS ===================================
+
+message UpdateUserInfoReq {
+  string ticket_id       = 1;
+  string user_id         = 2;
+  string user_full_name  = 3;
+  string user_phone      = 4; // what if a child?
+  string user_email      = 5;
+  string user_address    = 6;
+  string user_image      = 7; // required at inspector
+  string user_phone_code = 8;
+}
+
+message UpdateStatusReq {
+  string       ticket_id = 1;
+  TicketStatus status    = 2;
+}
+
+message UpdateEnableVerificationCodeReq {
+  string ticket_id                    = 1;
+  bool   is_enabled_verification_code = 2;
+}
+
+message GetMyTicketReq { string id = 1; }
+
+message GetMyTicketByOrderIdReq {
+  string             order_id   = 1;
+  TicketStatusFilter status     = 2;
+  PaginationReq      pagination = 3;
+}
+
+message GetMyTicketByPhoneReq {
+  string user_phone        = 1;
+  string verification_code = 2;
+}
+
+message GetMyTicketByTransferTransactionIdReq {
+  string        transaction_id = 1;
+  PaginationReq pagination     = 2;
+}
+
+message ListMyTicketReq {}
+
+message ListMyTicketByStatusReq {
+  string        order_id   = 1;
+  TicketStatus  status     = 2;
+  PaginationReq pagination = 3;
+}
+
+message ListMyTicketByPriceBlockReq {
+  string        order_id       = 1;
+  string        price_block_id = 2;
+  string        seat_name_from = 3;
+  string        seat_name_to   = 4;
+  string        seat_map_id    = 5;
+  PaginationReq pagination     = 6;
+}
+
+message ListMyTicketReadyToCheckinReq {}
+
+message MarkTicketOfflineReq { repeated string ticket_ids = 1; }
+
+message GetMyTransferTransactionHistoryReq { PaginationReq pagination = 1; }
+
+message GetMyTicketsByDeliveryIDReq {
+  string             delivery_id = 1;
+  base.PaginationReq pagination  = 2;
+}
+//================================= RESPONSE ===================================
+
+message GetMyTicketRes { TicketInfo info = 1; }
+
+message GetMyTicketByOrderIdRes {
+  repeated TicketInfo info       = 1;
+  PaginationRes       pagination = 2;
+}
+
+message GetMyTicketByPhoneRes { TicketInfo info = 1; }
+
+message GetMyTicketsRes { repeated TicketInfo info = 1; }
+
+message GetMyTicketByTransferTransactionIdRes {
+  repeated TicketInfo info       = 1;
+  PaginationRes       pagination = 2;
+}
+
+message ListMyTicketByStatusRes {
+  repeated TicketInfo info       = 1;
+  PaginationRes       pagination = 2;
+}
+
+message ListMyTicketByPriceBlockRes {
+  repeated TicketInfo info       = 1;
+  PaginationRes       pagination = 2;
+}
+
+message ListMyTicketReadyToCheckinRes { repeated TicketInfo info = 1; }
+
+message GetMyTransferTransactionHistoryRes {
+  repeated TransferTransaction transactions = 1;
+  PaginationRes                pagination   = 2;
+}
+
+message GetMyTicketsByDeliveryIDRes {
+  repeated TicketInfo items      = 1;
+  base.PaginationRes  pagination = 2;
+}

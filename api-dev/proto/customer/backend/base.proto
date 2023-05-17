@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package customer.backend;
+option  go_package = "./backend;backend";
+
+enum Boolean {
+  BOOLEAN_INVALID = 0;
+  BOOLEAN_TRUE    = 1;
+  BOOLEAN_FALSE   = 2;
+}
+
+message DefaultRes { bool result = 1; }
+
+message Coordinates {
+  double lat  = 1;
+  double long = 2;
+}
+
+message Empty {}

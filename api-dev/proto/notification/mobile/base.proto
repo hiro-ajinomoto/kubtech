@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package notification.mobile;
+option  go_package = "./mobile;mobile";
+
+message Empty {}
+
+message PaginationReq {
+  uint32 page_number = 1;
+  uint32 page_limit  = 2;
+}
+
+message PaginationRes {
+  uint32 page_current = 1;
+  uint32 page_limit   = 2;
+  int64  total_page   = 3;
+  int64  total_record = 4;
+}

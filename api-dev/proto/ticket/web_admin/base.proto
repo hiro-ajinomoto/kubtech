@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package ticket.web_admin;
+option  go_package = "./web_admin;web_admin";
+
+//================================= TYPES ===================================
+message Empty {}
+
+message PaginationReq {
+  uint32 page_number = 1;
+  uint32 page_limit  = 2;
+}
+
+message PaginationRes {
+  uint32 page_current = 1;
+  uint32 page_limit   = 2;
+  uint32 total_page   = 3;
+  int64  total_record = 4;
+}
+
+enum MediaType {
+  INVALID = 0;
+  IMAGE   = 1;
+  VIDEO   = 2;
+  AUDIO   = 3;
+  URL     = 4;
+  PDF     = 5;
+  DOC     = 6;
+  OTHER   = 7;
+}
+
+message Media {
+  string    name       = 1;
+  MediaType media_type = 2;
+  string    source_url = 3;
+  string    thumbnail  = 4;
+  bool      is_cover   = 5;
+}

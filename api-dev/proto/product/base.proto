@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package product;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/product;product";
+
+//================================= TYPES ===================================
+message Empty {}
+
+message PaginationReq {
+  uint32 page_number = 1;
+  uint32 page_limit  = 2;
+}
+
+message PaginationRes {
+  uint32 page_current = 1;
+  uint32 page_limit   = 2;
+  uint32 total_page   = 3;
+  int64  total_record = 4;
+}
+
+enum MediaType {
+  INVALID = 0;
+  IMAGE   = 1;
+  VIDEO   = 2;
+  AUDIO   = 3;
+  URL     = 4;
+  PDF     = 5;
+  DOC     = 6;
+  OTHER   = 7;
+}
+
+message Media {
+  string    name       = 1;
+  MediaType media_type = 2;
+  string    source_url = 3;
+  string    thumbnail  = 4;
+  bool      is_cover   = 5;
+}
+
+message OrderByItem {
+  bool   desc  = 1;
+  string field = 2;
+}
+
+enum SeatInfoType {
+  SeatInfoTypeNone      = 0;
+  SeatInfoTypeSeat      = 1;
+  SeatInfoTypeSeatBlock = 2;
+}
+
+message SeatInfo {
+  string       id              = 1;
+  SeatInfoType type            = 2;
+  string       seat_name       = 3;
+  string       seat_id         = 4;
+  string       seat_block_id   = 5;
+  string       seat_block_name = 6;
+  string       seat_map_id     = 7;
+  string       schedule_id     = 8;
+  string       event_id        = 9;
+}
+
+enum ProductType {
+  ProductTypeNone   = 0;
+  ProductTypeVOD    = 1;
+  ProductTypeTicket = 2;
+}

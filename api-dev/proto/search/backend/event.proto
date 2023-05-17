@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package search.backend;
+option  go_package = "./backend;backend";
+
+import "proto/search/backend/base.proto";
+
+service SearchEventService {
+  rpc InternalGetEvent(InternalGetEventReq) returns (InternalGetEventRes);
+}
+
+//================================= BASIC ===================================
+
+message EventCurrencyInfo {
+  string id   = 1;
+  string name = 2;
+  string code = 3;
+  string icon = 4;
+}
+
+message EventSimpleInfo {
+  string            es_id               = 1;
+  string            event_id            = 2;
+  string            partnership_id      = 3;
+  string            name                = 4;
+  repeated Media    medias              = 5;
+  string            hightlight_date_str = 6;
+  string            hightlight_address  = 7;
+  EventCurrencyInfo currency            = 8;
+  string            prefix_secret_code  = 9;
+  int64             number_of_tickets   = 10;
+}
+
+//================================= REQUESTS ===================================
+
+message InternalGetEventReq {
+  string id             = 1;
+  string partnership_id = 2;
+}
+
+//================================= RESPONSES ==================================
+
+message InternalGetEventRes { EventSimpleInfo info = 1; }

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ticket.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+import "ticket/web_partnership/base.proto";
+
+service InspectorService { rpc AssignCheckinEvent(AssignCheckinEventReq) returns (Empty); }
+
+////////////////////////////////// REQUEST //////////////////////////////////////////
+
+message AssignCheckinEventReq {
+  string inspector_id = 1;
+  string event_id     = 2;
+  string schedule_id  = 3;
+  string time_id      = 4;
+}

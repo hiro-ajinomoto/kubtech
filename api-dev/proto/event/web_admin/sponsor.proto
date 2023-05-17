@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package event.web_admin;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/web_admin;web_admin";
+
+import "event/web_admin/base.proto";
+
+service SponsorService {
+  rpc CreateSponsor(CreateSponsorReq) returns (CreateSponsorRes);
+  rpc UpdateSponsor(UpdateSponsorReq) returns (Empty);
+  rpc DeleteSponsor(DeleteSponsorReq) returns (Empty);
+  rpc GetSponsorDetail(GetSponsorDetailReq) returns (GetSponsorDetailRes);
+  rpc ListSponsor(ListSponsorReq) returns (ListSponsorRes);
+}
+
+//================================= TYPES ===================================
+
+message SponsorBasicInfo {
+  string          name   = 1;
+  string          cover  = 2;
+  string          avatar = 3;
+  string          detail = 4;
+  repeated string urls   = 5;
+}
+
+message SponsorListInfo {
+  string           id         = 1;
+  SponsorBasicInfo info       = 2;
+  int64            created_at = 3;
+  int64            updated_at = 4;
+  string           created_by = 5;
+  string           updated_by = 6;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateSponsorReq {
+  SponsorBasicInfo info = 1;
+  string           lang = 2;
+}
+
+message UpdateSponsorReq {
+  string           id   = 1;
+  SponsorBasicInfo info = 2;
+  string           lang = 3;
+}
+
+message DeleteSponsorReq { string id = 1; }
+
+message ListSponsorReq {
+  string               search_text = 1; // TODO: Vi và Toàn support
+  PaginationReq        pagination  = 2;
+  repeated OrderByItem order_by    = 3;
+}
+
+message GetSponsorDetailReq { string id = 1; }
+
+//================================= RESPONSES ==================================
+
+message CreateSponsorRes { string id = 1; }
+
+message GetSponsorDetailRes {
+  string           id         = 1;
+  SponsorBasicInfo info       = 2;
+  int64            created_at = 3;
+  int64            updated_at = 4;
+  string           created_by = 5;
+  string           updated_by = 6;
+}
+
+message ListSponsorRes {
+  repeated SponsorListInfo info       = 1;
+  PaginationRes            pagination = 2;
+}

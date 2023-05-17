@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+package order.mobile;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/order/mobile;mobile";
+
+import "order/mobile/base.proto";
+
+service CartService {
+  rpc AddProductToCart(AddProductToCartReq) returns (AddProductToCartRes);
+  rpc UpdateMyCart(UpdateMyCartReq) returns (UpdateMyCartRes);
+  rpc RemoveProductFromCart(RemoveProductFromCartReq) returns (RemoveProductFromCartRes);
+  rpc GetMyCart(GetMyCartReq) returns (GetMyCartRes);
+}
+
+enum CartProductPurchaseType {
+  CART_PRODUCT_PURCHASE_TYPE_INVALID      = 0;
+  CART_PRODUCT_PURCHASE_TYPE_RENT_OR_SELL = 1;
+  CART_PRODUCT_PURCHASE_TYPE_RENT_ONLY    = 2;
+  CART_PRODUCT_PURCHASE_TYPE_SELL_ONLY    = 3;
+}
+
+message CartInfo {
+  string                       id                    = 1;
+  int64                        created_at            = 2;
+  int64                        updated_at            = 3;
+  string                       created_by            = 4;
+  string                       updated_by            = 5;
+  string                       partnership_id        = 6;
+  string                       user_id               = 7;
+  repeated CartProductInfoItem products              = 8;
+  double                       total_price           = 9;
+  double                       converted_total_price = 10;
+}
+
+message CartProductInfo {
+  string                  id               = 1;
+  ProductStatus           status           = 2;
+  string                  name             = 3;
+  repeated string         medias           = 4;
+  repeated string         tags             = 5;
+  string                  sku              = 6;
+  double                  listed_price     = 7;
+  double                  discount_percent = 8;
+  double                  price            = 9;
+  string                  uom              = 10; // unit of measurement
+  string                  barcode          = 11;
+  CartProductCurrencyInfo currency         = 12;
+  string                  brand            = 13;
+  CustomBoolean           unlimited        = 14;
+  string                  partnership_id   = 15;
+  string                  country          = 16;
+  string                  language         = 17;
+  map<string, string>     additional_data  = 18;
+}
+
+message SeatInfo {
+  string id            = 1;
+  string seat_name     = 2;
+  string seat_block_id = 3;
+  string seatmap_id    = 4;
+  string schedule_id   = 5;
+  string event_id      = 6;
+}
+
+message CartProductCurrencyInfo {
+  string id   = 1;
+  string name = 2;
+  string code = 3;
+  string icon = 4;
+}
+
+message CartProductInfoItem {
+  CartProductInfo product_info = 1;
+  int64           quantity     = 2;
+}
+
+message CartProductItem {
+  string product_id = 1;
+  int64  quantity   = 2;
+}
+
+message CartProductAttribute {
+  message Value {
+    string language = 1;
+    string value    = 2;
+  }
+  string         master_data_id = 1;
+  repeated Value values         = 2;
+}
+
+//================================= REQUESTS ===================================
+
+message AddProductToCartReq { repeated CartProductItem products = 1; }
+
+message UpdateMyCartReq {
+  string                   cart_id  = 1;
+  repeated CartProductItem products = 2;
+}
+
+message RemoveProductFromCartReq { repeated CartProductItem products = 1; }
+
+message GetMyCartReq {}
+
+//================================= RESPONSE ===================================
+
+message AddProductToCartRes { string cart_id = 1; }
+
+message UpdateMyCartRes { string cart_id = 1; }
+
+message RemoveProductFromCartRes { string cart_id = 1; }
+
+message GetMyCartRes { CartInfo result = 1; }

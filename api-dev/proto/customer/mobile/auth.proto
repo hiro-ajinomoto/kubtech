@@ -1,0 +1,130 @@
+syntax = "proto3";
+
+package customer.mobile;
+option  go_package = "./mobile;mobile";
+
+import "proto/customer/mobile/base.proto";
+import "proto/customer/mobile/customer.proto";
+
+service AuthService {
+  // Authentication
+  rpc Register(RegisterReq) returns (RegisterRes);
+  rpc Login(LoginReq) returns (LoginRes);
+  rpc SocialLogin(SocialLoginReq) returns (LoginRes);
+  rpc RefreshToken(RefreshTokenReq) returns (RefreshTokenRes);
+  rpc LinkSocialAccount(LinkSocialAccountReq) returns (LinkSocialAccountRes);
+  rpc Logout(Empty) returns (Empty);
+  rpc LogoutAllDevice(Empty) returns (Empty);
+
+  rpc VerifySocialToken(VerifySocialTokenReq) returns (Empty);
+
+  rpc ScanQRCode(ScanQRCodeReq) returns (Empty);
+  rpc LoginByQRCode(LoginByQRCodeReq) returns (LoginByQRCodeRes);
+
+  rpc VerifyPasswordSecurity(VerifyPasswordSecurityReq) returns (VerifyPasswordSecurityRes);
+
+  // update important information with login social
+  rpc CheckAccountHavePhoneNumber(CheckAccountHavePhoneNumberReq) returns (CheckAccountHavePhoneNumberRes);
+  rpc UpdateImportantInformation(UpdateImportantInformationReq) returns (Empty);
+}
+
+//================================= TYPES ===================================
+
+enum AuthenticationType {
+  AUTHENTICATION_TYPE_INVALID = 0;
+  AUTHENTICATION_TYPE_PHONE   = 1;
+  AUTHENTICATION_TYPE_EMAIL   = 2;
+}
+
+//================================= REQUESTS ===================================
+
+message RegisterReq {
+  string             email               = 1;
+  string             password            = 2;
+  string             phone_number        = 3;
+  string             phone_code          = 4;
+  string             partnership_id      = 5;
+  string             name                = 6;
+  AuthenticationType authentication_type = 7;
+}
+
+message LoginReq {
+  AuthenticationType type           = 1;
+  string             email          = 2;
+  string             phone_number   = 3;
+  string             phone_code     = 4;
+  string             password       = 5;
+  string             partnership_id = 6;
+}
+
+message SocialLoginReq {
+  SocialType type           = 1;
+  string     access_token   = 2;
+  string     partnership_id = 3;
+  string     name           = 4;
+}
+
+message LinkSocialAccountReq {
+  SocialType type           = 1;
+  string     access_token   = 2;
+  string     partnership_id = 3;
+}
+
+message RefreshTokenReq { string refresh_token = 1; }
+
+message VerifySocialTokenReq {
+  SocialType type         = 1;
+  string     access_token = 2;
+}
+
+message ScanQRCodeReq { string qr_code = 1; }
+
+message LoginByQRCodeReq {
+  string qr_code        = 1;
+  string partnership_id = 2;
+}
+
+message VerifyPasswordSecurityReq { string password = 1; }
+
+message CheckAccountHavePhoneNumberReq {}
+
+message UpdateImportantInformationReq {
+  string phone_code   = 1;
+  string phone_number = 2;
+  string full_name    = 3;
+}
+
+//================================= RESPONSES ==================================
+
+message RegisterRes {
+  string access_token  = 1;
+  string refresh_token = 2;
+  uint64 expire_time   = 3;
+}
+
+message LoginRes {
+  string access_token  = 1;
+  string refresh_token = 2;
+  uint64 expire_time   = 3;
+}
+
+message LinkSocialAccountRes { UserInfo user_info = 1; }
+
+message RefreshTokenRes {
+  string access_token  = 1;
+  string refresh_token = 2;
+  uint64 expire_time   = 3;
+}
+
+message LoginByQRCodeRes {
+  string access_token  = 1;
+  string refresh_token = 2;
+  uint64 expire_time   = 3;
+}
+
+message VerifyPasswordSecurityRes {
+  string token       = 1;
+  uint64 expire_time = 2;
+}
+
+message CheckAccountHavePhoneNumberRes { bool have_phone_number = 1; }

@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package partner.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+import "proto/partner/web_partnership/base.proto";
+
+service PartnerLocationService {
+  rpc CreatePartnerLocation(CreatePartnerLocationReq) returns (CreatePartnerLocationRes);
+  rpc UpdatePartnerLocation(UpdatePartnerLocationReq) returns (Empty);
+  rpc DeletePartnerLocation(DeletePartnerLocationReq) returns (Empty);
+  rpc RetrievePartnerLocation(RetrievePartnerLocationReq) returns (RetrievePartnerLocationRes);
+  rpc ListPartnerLocation(ListPartnerLocationReq) returns (ListPartnerLocationRes);
+}
+
+//========================================= BASIC ==================================
+
+message PartnerLocationContactInfo {
+  string full_name    = 1;
+  string phone_code   = 2;
+  string phone_number = 3;
+}
+
+message PartnerLocationBasicInfo {
+  string                     name         = 1;
+  string                     description  = 2;
+  Coordinates                coordinates  = 3;
+  string                     unit         = 4;
+  string                     number       = 5;
+  string                     street       = 6;
+  string                     ward         = 7;
+  string                     district     = 8;
+  string                     city         = 9;
+  string                     region       = 10;
+  string                     country      = 11;
+  string                     postal_code  = 12;
+  string                     full_address = 13;
+  string                     suburban     = 14;
+  string                     partner_id   = 15;
+  PartnerLocationContactInfo contact_info = 16;
+}
+
+message PartnerLocationListInfo {
+  string                   id         = 1;
+  PartnerLocationBasicInfo info       = 2;
+  int64                    created_at = 3;
+  int64                    updated_at = 4;
+  string                   created_by = 5;
+  string                   updated_by = 6;
+}
+
+//======================================== REQUEST ==================================
+message CreatePartnerLocationReq { PartnerLocationBasicInfo info = 1; }
+
+message UpdatePartnerLocationReq {
+  string                   id   = 1;
+  PartnerLocationBasicInfo info = 2;
+}
+
+message DeletePartnerLocationReq { string id = 1; }
+
+message RetrievePartnerLocationReq { string id = 1; }
+
+message ListPartnerFilter { string partner_id = 1; }
+
+message ListPartnerLocationReq {
+  string               search_text = 1;
+  PaginationReq        pagination  = 2;
+  repeated OrderByItem order_by    = 3;
+  ListPartnerFilter    filter      = 4;
+}
+
+//======================================== RESPONSE ==================================
+
+message CreatePartnerLocationRes { string id = 1; }
+
+message RetrievePartnerLocationRes {
+  string                   id             = 1;
+  string                   partnership_id = 2;
+  PartnerLocationBasicInfo info           = 3;
+  int64                    created_at     = 4;
+  int64                    updated_at     = 5;
+  string                   created_by     = 6;
+  string                   updated_by     = 7;
+}
+
+message ListPartnerLocationRes {
+  repeated PartnerLocationListInfo info       = 1;
+  PaginationRes                    pagination = 2;
+}

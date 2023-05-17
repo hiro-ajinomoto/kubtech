@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package event.mobile;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/mobile;mobile";
+
+import "base/base.proto";
+
+service EventLocationService {  
+  rpc RetrieveEventLocation(RetrieveEventLocationReq) returns (RetrieveEventLocationRes);
+  rpc ListEventLocation(ListEventLocationReq) returns (EventLocationListRes);
+}
+
+//========================================= BASIC ==================================
+
+message EventLocationBasicInfo {
+  string name = 1;
+  string coordinate = 3;
+  string address      = 4;
+  string timezone     = 5;
+  string country      = 6;
+}
+
+message EventLocationInfo {
+  string id   = 1;
+  string name = 2;
+  string coordinate = 4;
+  string address      = 6;
+  string country      = 8;
+  string timezone     = 9;
+  int64  created_at   = 10;
+  int64  updated_at   = 11;  
+}
+
+//======================================== REQUEST ==================================
+message RetrieveEventLocationReq { string id = 1; }
+
+message ListEventLocationReq {
+  string             search_text     = 1; // TODO: Vi và Toàn support
+  base.PaginationReq pagination      = 2;
+  repeated base.OrderByItem order_by = 3;
+}
+
+message InternalListEventLocationByIdsReq { repeated string ids = 1; }
+
+//======================================== RESPONSE ==================================
+
+message RetrieveEventLocationRes { EventLocationInfo info = 1; }
+
+message EventLocationListRes {
+  repeated EventLocationInfo items      = 1;
+  base.PaginationRes         pagination = 2;
+}
+
+message InternalListEventLocationByIdsRes { repeated EventLocationInfo items = 1; }

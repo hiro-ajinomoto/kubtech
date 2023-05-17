@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package customer.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+import "proto/customer/web_partnership/base.proto";
+
+service CustomerLocationService {
+  rpc CreateMyLocation(CreateMyLocationReq) returns (CreateMyLocationRes);
+  rpc UpdateMyLocation(UpdateMyLocationReq) returns (Empty);
+  rpc DeleteMyLocation(DeleteMyLocationReq) returns (Empty);
+  rpc RetrieveMyLocation(RetrieveMyLocationReq) returns (RetrieveMyLocationRes);
+  rpc ListMyLocation(ListMyLocationReq) returns (ListMyLocationRes);
+}
+
+//========================================= BASIC ==================================
+
+message CustomerLocationBasicInfo {
+  string      name              = 1;
+  string      description       = 2;
+  Coordinates coordinates       = 3;
+  string      unit              = 4;
+  string      number            = 5;
+  string      street            = 6;
+  string      ward              = 7;
+  string      district          = 8;
+  string      city              = 9;
+  string      region            = 10;
+  string      country           = 11;
+  string      postal_code       = 12;
+  string      full_address      = 13;
+  string      suburban          = 14;
+  string      user_full_name    = 15;
+  string      user_phone_code   = 16;
+  string      user_phone_number = 17;
+}
+
+message CustomerLocationInfo {
+  string                    id         = 1;
+  CustomerLocationBasicInfo info       = 2;
+  int64                     created_at = 3;
+  int64                     updated_at = 4;
+  string                    created_by = 5;
+  string                    updated_by = 6;
+}
+
+//======================================== REQUEST ==================================
+message CreateMyLocationReq { CustomerLocationBasicInfo info = 1; }
+
+message UpdateMyLocationReq {
+  string                    id   = 1;
+  CustomerLocationBasicInfo info = 2;
+}
+
+message DeleteMyLocationReq { string id = 1; }
+
+message RetrieveMyLocationReq { string id = 1; }
+
+message ListMyLocationReq {
+  string               search_text = 1;
+  PaginationReq        pagination  = 2;
+  repeated OrderByItem order_by    = 3;
+}
+
+//======================================== RESPONSE ==================================
+
+message CreateMyLocationRes { string id = 1; }
+
+message RetrieveMyLocationRes {
+  string                    id            = 1;
+  string                    parnership_id = 2;
+  CustomerLocationBasicInfo info          = 3;
+  int64                     created_at    = 4;
+  int64                     updated_at    = 5;
+  string                    created_by    = 6;
+  string                    updated_by    = 7;
+}
+
+message ListMyLocationRes {
+  repeated CustomerLocationInfo info       = 1;
+  PaginationRes                 pagination = 2;
+}

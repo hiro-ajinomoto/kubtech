@@ -1,0 +1,17 @@
+{
+    "exchanges": [
+      "wallet_exchange"
+    ],
+    "queues": [
+      {
+        "name": "wallet_queue",
+        "topics": [
+          {
+            "name": "wallet.top_up",
+            "exchange": "wallet_exchange"
+          }
+        ]
+      }
+    ]
+  }
+  

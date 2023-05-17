@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package partner.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+service PartnerService { rpc CreatePartner(CreatePartnerReq) returns (CreatePartnerRes); }
+
+//================================= TYPES ===================================
+
+enum PartnerType {
+  PARTNER_TYPE_INVALID      = 0;
+  PARTNER_TYPE_PERSONAL     = 1;
+  PARTNER_TYPE_ORGANIZATION = 2;
+}
+
+message PartnerShopInfo {
+  string          id         = 1;
+  int64           created_at = 2;
+  int64           updated_at = 3;
+  string          created_by = 4;
+  string          updated_by = 5;
+  string          name       = 6;
+  string          logo       = 7;
+  string          banner     = 8;
+  repeated string documents  = 9;
+  PartnerType     type       = 10;
+}
+
+//================================= REQUESTS ===================================
+
+message CreatePartnerReq {
+  string          email           = 1;
+  string          password        = 2;
+  string          name            = 3;
+  string          profile_picture = 4;
+  string          phone_code      = 5;
+  string          phone_number    = 6;
+  string          shop_name       = 7;
+  string          shop_logo       = 8;
+  string          shop_banner     = 9;
+  repeated string documents       = 10;
+  PartnerType     type            = 11;
+}
+
+//================================= RESPONSES ==================================
+
+message CreatePartnerRes {
+  string owner_id = 1;
+  string shop_id  = 2;
+}

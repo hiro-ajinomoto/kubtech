@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package inspector.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+import "proto/inspector/web_partnership/base.proto";
+
+service InspectorService {
+  rpc Create(CreateReq) returns (Empty);
+  rpc GetMe(GetMeReq) returns (GetMeRes);
+  rpc ChangePassword(ChangePasswordReq) returns (Empty);
+  rpc GetUser(GetUserReq) returns (GetUserRes);
+
+  // public method
+  rpc CheckAlreadyExistEmail(CheckAlreadyExistEmailReq) returns (CheckAlreadyExistEmailRes);
+}
+
+//================================= TYPES ===================================
+
+message UserInfo {
+  string id              = 1;
+  int64  created_at      = 2;
+  int64  updated_at      = 3;
+  string email           = 4;
+  string password        = 5;
+  string name            = 6;
+  string profile_picture = 7;
+  string created_by      = 8;
+  string updated_by      = 9;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateReq {
+  string email           = 1;
+  string password        = 2;
+  string name            = 3;
+  string profile_picture = 4;
+}
+
+message ChangePasswordReq {
+  string old_password = 1;
+  string password     = 2;
+}
+
+message GetMeReq {}
+
+message GetUserReq { string email = 1; }
+
+message CheckAlreadyExistEmailReq { string email = 1; }
+
+//================================= RESPONSES ==================================
+
+message GetMeRes { UserInfo user_info = 1; }
+
+message GetUserRes { UserInfo user_info = 1; }
+
+message CheckAlreadyExistEmailRes { bool is_exist = 1; }

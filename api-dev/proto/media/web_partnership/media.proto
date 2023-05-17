@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package media.web_partnership;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/media/web_partnership;web_partnership";
+
+import "media/base_media.proto";
+import "media/web_partnership/base.proto";
+
+service MediaService {
+  rpc CreateMedia(CreateMediaReq) returns (CreateMediaRes);
+  rpc RetrieveMedia(RetrieveMediaReq) returns (RetrieveMediaRes);
+  rpc UpdateMedia(UpdateMediaReq) returns (Empty);
+  rpc DeleteMedia(DeleteMediaReq) returns (Empty);
+  rpc ListMedias(ListMediasReq) returns (ListMediasRes);
+
+  rpc InternalListMediaByIds(InternalListMediaByIdsReq) returns (InternalListMediaByIdsRes);
+}
+
+//=================================== TYPES ====================================
+message MediaBasicInfo {
+  string          title          = 1;
+  string          intro          = 2;
+  bool            is_public      = 3;
+  bool            is_premium     = 4;
+  string          video_url      = 5;
+  string          thumbnail_url  = 6;
+  string          partnership_id = 7;
+  repeated string hashtags       = 8;
+  string          slug           = 9;
+}
+
+message MediaInfo {
+  string          id             = 1;
+  int64           created_at     = 2;
+  int64           updated_at     = 3;
+  string          created_by     = 4;
+  string          updated_by     = 5;
+  string          partnership_id = 6;
+  string          title          = 7;
+  string          intro          = 8;
+  bool            is_public      = 9;
+  bool            is_premium     = 10;
+  string          video_url      = 11;
+  string          thumbnail_url  = 12;
+  repeated string hashtags       = 13;
+  string          slug           = 14;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateMediaReq {
+  bool            is_public     = 1;
+  bool            is_premium    = 2;
+  string          title         = 3;
+  string          video_url     = 4;
+  string          thumbnail_url = 5;
+  repeated string hashtags      = 6;
+  string          intro         = 7;
+}
+
+message UpdateMediaReq {
+  string          id            = 1;
+  bool            is_public     = 2;
+  bool            is_premium    = 3;
+  string          title         = 4;
+  string          video_url     = 5;
+  string          thumbnail_url = 6;
+  repeated string hashtags      = 7;
+  string          intro         = 8;
+}
+
+message DeleteMediaReq { string id = 1; }
+
+message RetrieveMediaReq { string id = 1; }
+
+message ListMediasReq {
+  string               search_text = 1;
+  string               is_public   = 2;
+  string               is_premium  = 3;
+  PaginationReq        pagination  = 4;
+  repeated OrderByItem order_by    = 5;
+}
+
+message InternalListMediaByIdsReq { repeated string ids = 1; }
+
+//================================= RESPONSES ==================================
+
+message CreateMediaRes { string id = 1; }
+
+message RetrieveMediaRes { MediaInfo info = 1; }
+
+message ListMediasRes {
+  repeated MediaInfo info       = 1;
+  PaginationRes      pagination = 2;
+}
+
+message InternalListMediaByIdsRes { repeated MediaInfo infos = 1; }

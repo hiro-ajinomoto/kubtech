@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package partnership;
+option  go_package = "./;partnership";
+
+import "proto/partnership/base.proto";
+
+service VoucherService {
+  rpc CreateVoucher(CreateVoucherReq) returns (CreateVoucherRes);
+  rpc UpdateVoucher(UpdateVoucherReq) returns (Empty);
+  rpc DeleteVoucher(DeleteVoucherReq) returns (Empty);
+
+  rpc RetrieveVoucher(RetrieveVoucherReq) returns (RetrieveVoucherRes);
+  rpc ListVoucher(ListVoucherReq) returns (ListVoucherRes);
+
+  rpc InternalListVoucherByIds(InternalListVoucherByIdsReq) returns (InternalListVoucherByIdsRes);
+}
+
+//================================= TYPES ===================================
+
+message VoucherBasicInfo {
+  string             name       = 1;
+  string             thumbnail  = 2;
+  VoucherSponsorInfo sponsor    = 3;
+  int64              expired_at = 4;
+  string             event_id   = 5;
+  string             detail     = 6;
+}
+
+message VoucherListInfo {
+  string           id         = 1;
+  VoucherBasicInfo info       = 2;
+  int64            created_at = 3;
+  int64            updated_at = 4;
+  string           created_by = 5;
+  string           updated_by = 6;
+}
+
+message VoucherSponsorInfo {
+  string id     = 1;
+  string name   = 2;
+  string cover  = 3;
+  string avatar = 4;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateVoucherReq {
+  string name       = 1;
+  string thumbnail  = 2;
+  string sponsor_id = 3;
+  int64  expired_at = 4;
+  string event_id   = 5;
+  string detail     = 6;
+}
+
+message UpdateVoucherReq {
+  string id         = 1;
+  string name       = 2;
+  string thumbnail  = 3;
+  string sponsor_id = 4;
+  int64  expired_at = 5;
+  string event_id   = 6;
+  string detail     = 7;
+}
+
+message DeleteVoucherReq { string id = 1; }
+
+message ListVoucherReq {
+  string               search_text = 1;
+  PaginationReq        pagination  = 2;
+  repeated OrderByItem order_by    = 3;
+}
+
+message RetrieveVoucherReq { string id = 1; }
+
+message InternalListVoucherByIdsReq { repeated string ids = 1; }
+
+//================================= RESPONSES ==================================
+
+message CreateVoucherRes { string id = 1; }
+
+message RetrieveVoucherRes {
+  string           id         = 1;
+  VoucherBasicInfo info       = 2;
+  int64            created_at = 3;
+  int64            updated_at = 4;
+  string           created_by = 5;
+  string           updated_by = 6;
+}
+
+message ListVoucherRes {
+  repeated VoucherListInfo info       = 1;
+  PaginationRes            pagination = 2;
+}
+
+message InternalListVoucherByIdsRes { repeated VoucherListInfo info = 1; }

@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package media.backend;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/media/backend;backend";
+
+import "base/base.proto";
+
+service HashtagService {
+  rpc InternalUpsertHashtags(InternaUpsertHashtagsReq) returns (InternaUpsertHashtagsRes);
+  rpc InternalListHashtagByIds(InternalListHashtagByIdsReq) returns (InternalListHashtagByIdsRes);
+}
+
+//=================================== TYPES ====================================
+message HashtagBasicInfo {
+
+  string name = 1;
+  // string partnership_id = 2;
+}
+message HashtagInfo {
+  string id             = 1;
+  int64  created_at     = 2;
+  int64  updated_at     = 3;
+  string created_by     = 4;
+  string updated_by     = 5;
+  string name           = 6;
+  string partnership_id = 7;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateHashtagReq { string name = 1; }
+
+message UpdateHashtagReq {
+  string id   = 1;
+  string name = 2;
+}
+
+message DeleteHashtagReq { string id = 1; }
+
+message PublicListHashtagReq {
+  string             search                = 1;
+  base.PaginationReq pagination            = 2;
+  repeated base.OrderByItem order_by       = 3;
+  string                    partnership_id = 4;
+}
+
+message RetrieveHashtagReq { string id = 1; }
+
+message PublicRetrieveHashtagReq {
+  string id             = 1;
+  string partnership_id = 2;
+}
+
+message InternaUpsertHashtagsReq { repeated string hashtags = 1; }
+message InternalListHashtagByIdsReq { repeated string ids = 1; }
+
+//================================= RESPONSES ==================================
+
+message CreateHashtagRes { string id = 1; }
+
+message RetrieveHashtagRes {
+  HashtagInfo info   = 1;
+  bool        bought = 2;
+}
+
+message PublicRetrieveHashtagRes {
+  HashtagInfo info   = 1;
+  bool        bought = 2;
+}
+
+message InternaUpsertHashtagsRes { repeated string ids = 1; }
+message InternalListHashtagByIdsRes { repeated HashtagInfo items = 1; }
+
+message PublicListHashtagRes {
+  repeated HashtagBasicInfo info       = 1;
+  base.PaginationRes        pagination = 2;
+}

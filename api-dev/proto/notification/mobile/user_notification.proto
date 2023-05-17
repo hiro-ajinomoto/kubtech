@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package notification.mobile;
+option  go_package = "./mobile;mobile";
+
+import "proto/notification/mobile/base.proto";
+
+service UserNotificationService {
+  rpc GetUserNotifications(GetUserNotificationsReq) returns (GetUserNotificationsRes);
+  rpc MarkAsRead(MarkAsReadReq) returns (Empty);
+  rpc DeleteUserNotification(DeleteUserNotificationReq) returns (Empty);
+}
+
+//================================= TYPES ===================================
+
+message UserNotification {
+  string              id         = 1;
+  uint32              action     = 2;
+  string              title      = 3;
+  string              message    = 4;
+  string              image      = 5;
+  map<string, string> data       = 6;
+  int64               created_at = 7;
+  bool                is_read    = 8;
+}
+
+//================================= REQUESTS ===================================
+
+message GetUserNotificationsReq { PaginationReq pagination = 1; }
+
+message MarkAsReadReq { string notification_id = 1; }
+
+message DeleteUserNotificationReq { string notification_id = 1; }
+
+//================================= RESPONSES ==================================
+
+message GetUserNotificationsRes {
+  uint64                    unread        = 1;
+  repeated UserNotification notifications = 2;
+  PaginationRes             pagination    = 3;
+}

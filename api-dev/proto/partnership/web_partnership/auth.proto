@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package partnership.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+import "proto/partnership/web_partnership/base.proto";
+
+service AuthService {
+  rpc Login(LoginReq) returns (LoginRes);
+  rpc Logout(LogoutReq) returns (Empty);
+  rpc RefreshToken(RefreshTokenReq) returns (RefreshTokenRes);
+}
+
+//================================= REQUESTS ===================================
+
+message LoginReq {
+  string phone_code     = 1;
+  string phone_number   = 2;
+  string password       = 3;
+  string partnership_id = 4;
+}
+
+message RefreshTokenReq { string refresh_token = 1; }
+
+message LogoutReq {}
+
+//================================= RESPONSES ==================================
+
+message LoginRes {
+  string access_token  = 1;
+  string refresh_token = 2;
+  uint64 expire_time   = 3;
+}
+
+message RefreshTokenRes {
+  string access_token  = 1;
+  string refresh_token = 2;
+  uint64 expire_time   = 3;
+}

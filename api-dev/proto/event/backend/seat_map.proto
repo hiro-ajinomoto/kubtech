@@ -1,0 +1,210 @@
+syntax = "proto3";
+
+package event.backend;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/backend;backend";
+import "event/backend/base.proto";
+
+import "base/base.proto";
+
+service SeatMapService {
+  rpc RetrieveSeatBlock(RetrieveSeatBlockReq) returns (RetrieveSeatBlockRes);
+  rpc InternalListSeatMapByIds(ListSeatMapByIdsReq) returns (ListSeatMapByIdsRes);
+  rpc RetrieveSeatMap(RetrieveSeatMapReq) returns (RetrieveSeatMapRes);
+
+  rpc InternalListSeatMapDetailByIds(InternalListSeatMapDetailByIdsReq) returns (InternalListSeatMapDetailByIdsRes);
+
+  rpc AssociateSchedule(AssociateScheduleReq) returns (base.Empty);
+  rpc InternalListSeatMapDetailByEventId(ListSeatMapDetailByEventIdReq) returns (ListSeatMapDetailByEventIdRes);
+
+  rpc InternalListSeatBlockBySeatMapIds(InternalListSeatBlockBySeatMapIdsReq)
+      returns (InternalListSeatBlockBySeatMapIdsRes);
+  rpc InternalListSeatBySeatBlockIds(InternalListSeatBySeatBlockIdsReq) returns (InternalListSeatBySeatBlockIdsRes);
+  rpc AcquireLock(AcquireLockReq) returns (AcquireRes);
+  rpc AcquireSell(AcquireSellReq) returns (AcquireRes);
+  rpc ReleaseLock(ReleaseLockReq) returns (AcquireRes);
+}
+enum LockSource {
+  LOCK_SOURCE_INVALID = 0;
+  LOCK_SOURCE_PST     = 1;
+  LOCK_SOURCE_MOBILE  = 2;
+}
+enum SeatStatus {
+  SEAT_STATUS_NONE      = 0;
+  SEAT_STATUS_AVAILABLE = 1;
+  SEAT_STATUS_BOOKING   = 2;
+  SEAT_STATUS_LOCKED    = 3;
+  SEAT_STATUS_SOLD      = 4;
+  SEAT_STATUS_DISABLE   = 99;
+}
+//============= ==================== TYPES ===================================
+
+message SeatMapInfo {
+  string name               = 2;
+  string description        = 3;
+  string map_picture        = 4;
+  int64  max_seat_per_order = 5;
+  string currency           = 6;
+}
+message SeatMap {
+  string id                 = 1;
+  string name               = 2;
+  string description        = 3;
+  string map_picture        = 4;
+  int64  max_seat_per_order = 5;
+  string currency           = 6;
+  int64  created_at         = 7;
+  string created_by         = 8;
+  int64  updated_at         = 9;
+  string updated_by         = 10;
+  int64  count_block        = 11;
+  int64  count_seat         = 12;
+  double min_price          = 13;
+  double max_price          = 14;
+  string event_id           = 15;
+  string schedule_id        = 16;
+}
+
+message SeatBlockInfo {
+  string        name            = 1;
+  string        color           = 2;
+  SeatLine      row             = 3;
+  SeatLine      col             = 4;
+  double        width           = 5;
+  double        height          = 6;
+  int64         total_seat      = 7;
+  double        price           = 8;
+  Position      position        = 9;
+  string        seat_map_id     = 10;
+  bool          can_select_seat = 11;
+  repeated Seat seats           = 12;
+}
+message SeatBlock {
+  string        id              = 1;
+  string        name            = 2;
+  string        color           = 3;
+  SeatLine      row             = 4;
+  SeatLine      col             = 5;
+  double        width           = 6;
+  double        height          = 7;
+  int64         total_seat      = 8;
+  double        price           = 9;
+  Position      position        = 10;
+  repeated Seat seats           = 11;
+  string        seat_map_id     = 12;
+  bool          can_select_seat = 13;
+  int64         created_at      = 14;
+  string        created_by      = 15;
+  int64         updated_at      = 16;
+  string        updated_by      = 17;
+}
+
+message SeatLine {
+  int64  quantity        = 1;
+  string begin_character = 2;
+}
+
+message Currency {
+  string id   = 1;
+  string name = 2;
+  string code = 3;
+  string icon = 4;
+}
+
+message Seat {
+  string     id       = 1;
+  string     name     = 2;
+  Position   position = 3;
+  SeatStatus status   = 4;
+}
+
+//================================= REQUESTS ===================================
+
+message RetrieveSeatMapReq { string id = 1; }
+
+message RetrieveSeatBlockReq {
+  string seat_map_id   = 1;
+  string seat_block_id = 2;
+}
+
+message ListSeatMapByIdsReq { repeated string ids = 1; }
+message InternalListSeatMapDetailByIdsReq {
+  repeated string ids            = 1;
+  repeated string seat_block_ids = 2;
+  repeated string seat_ids       = 3;
+}
+
+message AssociateScheduleReq {
+  string          partnership_id = 1;
+  string          user_id        = 2;
+  string          event_id       = 3;
+  string          schedule_id    = 4;
+  repeated string seat_map_ids   = 5;
+}
+message AcquireLockReq {
+  LockSource          actor_source = 1;
+  string              actor_id     = 2;
+  string              actor_name   = 3;
+  uint32              duration     = 4; // unit: minute
+  repeated string     seat_ids     = 5;
+  map<string, uint32> blocks       = 6;
+  string              note         = 7;
+}
+message ReleaseLockReq {
+  LockSource          actor_source = 1;
+  string              actor_id     = 2;
+  string              actor_name   = 3;
+  repeated string     seat_ids     = 4;
+  map<string, uint32> blocks       = 5; // map<blockID, quantity>
+  string              note         = 6;
+}
+message AcquireSellReq {
+  LockSource          actor_source = 1;
+  string              actor_id     = 2;
+  string              actor_name   = 3;
+  repeated string     seat_ids     = 4;
+  map<string, uint32> blocks       = 5;
+  string              note         = 6;
+}
+
+//================================= RESPONSES ==================================
+
+message CreateSeatMapRes { string id = 1; }
+
+message SeatBlockRes { SeatBlock info = 1; }
+
+message RetrieveSeatMapRes {
+  SeatMap               info         = 2;
+  repeated SeatBlockRes price_blocks = 3;
+}
+
+message RetrieveSeatBlockRes { SeatBlock info = 1; }
+
+message ListSeatMapByIdsRes { repeated SeatMap items = 1; }
+
+message ListSeatMapDetailByEventIdReq { string id = 1; }
+
+message SeatMapDetailByEventIDRes {
+  SeatMap            info   = 1;
+  repeated SeatBlock blocks = 2;
+}
+
+message ListSeatMapDetailByEventIdRes { repeated SeatMapDetailByEventIDRes items = 1; }
+message InternalListSeatMapDetailByIdsRes {
+  repeated SeatMap   seat_maps   = 1;
+  repeated SeatBlock seat_blocks = 2;
+  repeated Seat      seats       = 3;
+}
+
+message InternalListSeatBlockBySeatMapIdsReq { repeated string ids = 1; }
+
+message InternalListSeatBlockBySeatMapIdsRes { repeated SeatBlock items = 1; }
+
+message InternalListSeatBySeatBlockIdsReq { repeated string ids = 1; }
+
+message InternalListSeatBySeatBlockIdsRes { repeated Seat items = 12; }
+
+message AcquireRes {
+  bool                is_success   = 1;
+  map<string, string> error_seats  = 2;
+  map<string, string> error_blocks = 3;
+}

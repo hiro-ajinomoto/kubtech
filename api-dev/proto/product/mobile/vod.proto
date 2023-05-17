@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package product.mobile;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/product/mobile;mobile";
+
+import "product/mobile/base.proto";
+
+service VODService { rpc GetVODs(GetVODsReq) returns (GetVODsRes); }
+
+//================================= TYPES ===================================
+
+enum FilterStatus {
+  FILTER_STATUS_INVALID = 0;
+  FILTER_STATUS_HOT     = 1;
+  FILTER_STATUS_NEW     = 2;
+}
+
+message VODSimple {
+  string          id                   = 1;
+  string          partnership_id       = 2;
+  string          name                 = 3;
+  repeated string medias               = 4;
+  repeated string tags                 = 5;
+  int64           available_start_time = 6;
+  int64           available_end_time   = 7;
+  double          listed_price         = 8;
+  double          discount_percent     = 9;
+  double          price                = 10;
+  string          brand                = 11;
+  bool            in_booking           = 12;
+  string          partner_shop_id      = 13;
+  string          quality              = 14;
+  int64           duration             = 15;
+  BookingStatus   booking_status       = 16;
+  string          currency             = 17;
+}
+
+//================================= REQUESTS ===================================
+
+message GetVODsReq {
+  FilterStatus  filter_status  = 1;
+  PaginationReq pagination     = 2;
+  string        partnership_id = 3;
+}
+
+//================================= RESPONSES ==================================
+
+message GetVODsRes {
+  repeated VODSimple vods       = 1;
+  PaginationRes      pagination = 2;
+}

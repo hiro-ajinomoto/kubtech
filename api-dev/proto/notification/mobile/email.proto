@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package notification.mobile;
+option  go_package = "./mobile;mobile";
+
+import "proto/notification/mobile/base.proto";
+
+service EmailSvc {
+  rpc AddEmailTemplate(AddEmailTemplateReq) returns (Empty);
+  rpc UpdateEmailTemplate(UpdateEmailTemplateReq) returns (Empty);
+}
+
+enum EmailType {
+  EMAIL_TYPE_INVALID                                     = 0;
+  EMAIL_TYPE_CUSTOMER_SIGNUP                             = 1;
+  EMAIL_TYPE_CUSTOMER_EMAIL_VERIFICATION                 = 2;
+  EMAIL_TYPE_CUSTOMER_RESET_PASSWORD                     = 3;
+  EMAIL_TYPE_CUSTOMER_EMAIL_CHANGE_CONFIRMATION          = 4;
+  EMAIL_TYPE_CUSTOMER_RESET_PASSWORD_SUCCESS             = 5;
+  EMAIL_TYPE_CUSTOMER_VERIFIED_PAYMENT                   = 6;
+  EMAIL_TYPE_CUSTOMER_VERIFIED_TICKET                    = 7;
+  EMAIL_TYPE_CUSTOMER_TRANSFER_TICKET                    = 8;
+  EMAIL_TYPE_INSPECTOR_RESET_PASSWORD                    = 9;
+  EMAIL_TYPE_CUSTOMER_VERIFIED_PRODUCT_PAYMENT           = 10;
+  EMAIL_TYPE_CUSTOMER_EMAIL_SECURITY_CHANGE_EMAIL        = 11;
+  EMAIL_TYPE_CUSTOMER_EMAIL_SECURITY_CHANGE_PHONE_NUMBER = 12;
+}
+
+message EmailTemplate {
+  string    id         = 1;
+  EmailType type       = 2;
+  string    subject    = 3;
+  string    content    = 4;
+  int64     created_at = 5;
+  int64     updated_at = 6;
+  string    created_by = 7;
+  string    updated_by = 8;
+}
+
+// REQUEST
+
+message AddEmailTemplateReq {
+  EmailType type    = 1;
+  string    subject = 2;
+  string    content = 3;
+}
+
+message UpdateEmailTemplateReq {
+  EmailType type    = 1;
+  string    subject = 2;
+  string    content = 3;
+}

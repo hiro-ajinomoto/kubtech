@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package event.backend;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/backend;backend";
+
+service EventLocationService {
+  rpc RetrieveEventLocationById(RetrieveEventLocationByIdReq) returns (RetrieveEventLocationByIdRes);
+}
+
+//========================================= BASIC ==================================
+
+message EventLocationInfo {
+  string id           = 1;
+  string name         = 2;
+  string description  = 3;
+  string coordination = 4;
+  string address      = 5;
+  string country      = 6;
+  string timezone     = 7;
+  string ward         = 8;
+  string district     = 9;
+  string city         = 10;
+}
+//======================================== REQUEST ==================================
+
+message RetrieveEventLocationByIdReq { string id = 1; }
+
+//======================================== RESPONSE ==================================
+
+message RetrieveEventLocationByIdRes { EventLocationInfo info = 1; }

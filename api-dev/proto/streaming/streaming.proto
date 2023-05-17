@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package streaming;
+option  go_package = "./;streaming";
+
+// import "proto/streaming/base.proto";
+
+// require to login
+service StreamingService {
+  rpc GetEpisodes(GetEpisodesReq) returns (GetEpisodesRes);
+  rpc GetStreamingInfo(GetStreamingInfoReq) returns (GetStreamingInfoRes);
+  rpc NewSession(NewSessionReq) returns (NewSessionRes);
+  rpc HeartbeatSession(HeartbeatSessionReq) returns (HeartbeatSessionRes);
+  rpc EndSession(EndSessionReq) returns (EndSessionRes);
+}
+
+//================================= TYPES ===================================
+
+enum SourceType {
+  STREAMING_SOURCE_TYPE_INVALID = 0;
+  STREAMING_SOURCE_TYPE_HLS     = 1; // hls
+  STREAMING_SOURCE_TYPE_MP4     = 2; // video/mp4
+}
+
+enum StreamingType {
+  STREAMING_TYPE_INVALID     = 0;
+  STREAMING_TYPE_VOD         = 1; // Video on Demand
+  STREAMING_TYPE_LIVE_STREAM = 2; // Live Stream
+}
+
+message Header {
+  string key   = 1;
+  string value = 2;
+}
+
+message Source {
+  bool            is_default = 1;
+  SourceType      type       = 2;
+  string          file       = 3;
+  string          label      = 4;
+  repeated Header headers    = 5;
+}
+
+message Server {
+  string          name    = 1;
+  repeated Source sources = 2;
+  int32           weight  = 3;
+}
+
+message Scene {
+  string thumbnail_url = 1;
+  string display_time  = 3;
+  uint32 seek_seconds  = 2;
+  string title         = 4;
+}
+
+message Episode {
+  string         episode_id = 1;
+  string         name       = 2;
+  repeated Scene scenes     = 3;
+  string         poster     = 4;
+}
+
+//================================= REQUESTS ===================================
+
+message GetEpisodesReq { string product_id = 1; }
+
+message GetStreamingInfoReq {
+  string episode_id = 1;
+  string product_id = 2;
+}
+
+message NewSessionReq { string product_id = 1; }
+message HeartbeatSessionReq { string session_id = 1; }
+message EndSessionReq { string session_id = 1; }
+
+//================================= RESPONSE ===================================
+
+message GetStreamingInfoRes {
+  repeated Server servers = 1;
+  StreamingType   type    = 2;
+}
+message GetEpisodesRes { repeated Episode episodes = 1; }
+
+message HeartbeatSessionRes {}
+message NewSessionRes {
+  string session_id         = 1;
+  uint32 heartbeat_interval = 2;
+}
+message EndSessionRes {}

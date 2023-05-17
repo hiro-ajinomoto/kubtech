@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package ticket.web_inspector;
+option  go_package = "./web_inspector;web_inspector";
+
+import "ticket/web_inspector/base.proto";
+
+service PaperTicketService {
+  rpc GetPaperTicketByCode(GetPaperTicketByCodeReq) returns (GetPaperTicketByCodeRes);
+
+  rpc MapPaperTicketInfoAndCheckin(MapPaperTicketInfoAndCheckinReq) returns (Empty);
+}
+
+//================================= TYPES ===================================
+enum PaperTicketStatus {
+  PAPER_TICKET_STATUS_INVALID    = 0;
+  PAPER_TICKET_STATUS_NOT_USED   = 1;
+  PAPER_TICKET_STATUS_CHECKED_IN = 2;
+}
+
+message PaperTicketInfo {
+  string                             id              = 1;
+  int64                              created_at      = 2;
+  int64                              updated_at      = 3;
+  string                             inspector_image = 4;
+  PaperTicketEventInfo               event_info      = 5;
+  string                             secret_code     = 6;
+  repeated PaperTicketCheckInLogInfo checkin_logs    = 7;
+  string                             partnership_id  = 8;
+  PaperTicketStatus                  status          = 9;
+}
+
+message PaperTicketEventLocation {
+  string id       = 1;
+  string address  = 2;
+  string ward     = 3;
+  string district = 4;
+  string city     = 5;
+  string country  = 6;
+}
+
+message PaperTicketEventInfo {
+  string                   event_id           = 1;
+  string                   name               = 2;
+  int64                    start_time         = 3;
+  int64                    end_time           = 4;
+  int64                    checkin_start_time = 5;
+  int64                    checkin_end_time   = 6;
+  PaperTicketEventLocation location           = 7;
+  string                   timezone           = 8;
+  bool                     checkin_ended      = 9;
+}
+
+message PaperTicketCheckInLogInfo {
+  string inspector_id = 1;
+  int64  time         = 2;
+}
+
+//================================= REQUESTS ===================================
+
+message MapPaperTicketInfoAndCheckinReq {
+  string               secret_code     = 1;
+  PaperTicketEventInfo event_info      = 2;
+  string               inspector_image = 3;
+  string               partnership_id  = 4;
+}
+
+message GetPaperTicketByCodeReq { string secret_code = 1; }
+
+//================================= RESPONSE ===================================
+
+message GetPaperTicketByCodeRes { PaperTicketInfo info = 1; }

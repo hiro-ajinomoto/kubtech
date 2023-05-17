@@ -1,0 +1,193 @@
+syntax = "proto3";
+
+package event.mobile;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/mobile;mobile";
+
+import "base/base.proto";
+
+service SeatMapService {
+  rpc ListSeatMap(ListSeatMapReq) returns (ListSeatMapRes);
+  rpc RetrieveSeatMap(RetrieveSeatMapReq) returns (RetrieveSeatMapRes);
+
+  rpc ListSeatBlock(ListSeatBlockReq) returns (ListSeatBlockRes);
+  rpc RetrieveSeatBlock(RetrieveSeatBlockReq) returns (RetrieveSeatBlockRes);
+  rpc ListDecoration(ListDecorationReq) returns (ListSeatBlockRes);
+  rpc UpdateSeatStatus(UpdateSeatStatusReq) returns (UpdateSeatStatusRes);
+}
+
+enum SeatStatus {
+  SEAT_STATUS_UNUSE     = 0;
+  SEAT_STATUS_AVAILABLE = 1;
+  SEAT_STATUS_BOOKING   = 2;
+  SEAT_STATUS_LOCKED    = 3;
+  SEAT_STATUS_SOLD      = 4;
+  SEAT_STATUS_DISABLE   = 99;
+}
+//================================= TYPES ===================================
+
+message SeatMapInfo {
+  string name               = 2;
+  string description        = 3;
+  string map_picture        = 4;
+  int64  max_seat_per_order = 5;
+  string currency           = 6;
+}
+message SeatMap {
+  string         id                 = 1;
+  string         name               = 2;
+  string         description        = 3;
+  string         map_picture        = 4;
+  int64          max_seat_per_order = 5;
+  string         currency           = 6;
+  int64          created_at         = 7;
+  string         created_by         = 8;
+  int64          updated_at         = 9;
+  string         updated_by         = 10;
+  int64          count_block        = 11;
+  int64          count_seat         = 12;
+  double         min_price          = 13;
+  double         max_price          = 14;
+  repeated Sharp decoration_items   = 15;
+  string         event_id           = 16;
+  string         schedule_id        = 17;
+}
+
+message SeatBlockInfo {
+  string        name            = 1;
+  string        color           = 2;
+  SeatLine      row             = 3;
+  SeatLine      col             = 4;
+  double        width           = 5;
+  double        height          = 6;
+  int64         total_seat      = 7;
+  double        price           = 8;
+  Position      position        = 9;
+  string        seat_map_id     = 10;
+  bool          can_select_seat = 11;
+  repeated Seat seats           = 12;
+  double        rotation        = 13;
+}
+message SeatBlock {
+  string        id              = 1;
+  string        name            = 2;
+  string        color           = 3;
+  SeatLine      row             = 4;
+  SeatLine      col             = 5;
+  double        width           = 6;
+  double        height          = 7;
+  int64         total_seat      = 8;
+  double        price           = 9;
+  Position      position        = 10;
+  repeated Seat seats           = 11;
+  string        seat_map_id     = 12;
+  bool          can_select_seat = 13;
+  int64         created_at      = 14;
+  string        created_by      = 15;
+  int64         updated_at      = 16;
+  string        updated_by      = 17;
+  double        rotation        = 18;
+  BlockStats    stats           = 19;
+}
+
+message Sharp {
+  string            id       = 1;
+  string            name     = 2;
+  string            color    = 3;
+  Position          position = 4;
+  string            type     = 5;
+  repeated Position points   = 6;
+}
+
+message BlockStats {
+  int64 available = 1;
+  int64 booking   = 2;
+  int64 locked    = 3;
+  int64 sold      = 4;
+}
+
+message SeatLine {
+  int64  quantity        = 1;
+  string begin_character = 2;
+}
+
+message Currency {
+  string id   = 1;
+  string name = 2;
+  string code = 3;
+  string icon = 4;
+}
+
+message Position {
+  double x = 1;
+  double y = 2;
+}
+
+message Seat {
+  string        id       = 1;
+  string        name     = 2;
+  Position      position = 3;
+  SeatStatus    status   = 4;
+  int64         order_x  = 5;
+  int64         order_y  = 6;
+  SeatStatusLog log      = 7;
+}
+message SeatStatusLog {
+  int64      updated_at = 1;
+  string     updated_by = 2;
+  SeatStatus old_status = 3;
+  SeatStatus status     = 4;
+  string     note       = 5;
+}
+
+//================================= REQUESTS ===================================
+
+message ListSeatMapReq {
+  string             search_text     = 1;
+  base.PaginationReq pagination      = 2;
+  repeated base.OrderByItem order_by = 3;
+}
+message RetrieveSeatMapReq { string id = 1; }
+
+message ListSeatBlockReq { string seat_map_id = 1; }
+
+message RetrieveSeatBlockReq {
+  string seat_map_id   = 1;
+  string seat_block_id = 2;
+}
+
+message UpsertDecorationReq {
+  string seat_map_id = 1;
+  Sharp  info        = 2;
+}
+
+message UpdateSeatStatusReq {
+  string                             seat_map_id = 1;
+  repeated UpdateSeatStatusDetailReq seat_detail = 2;
+  SeatStatus                         status      = 3;
+  string                             note        = 5;
+}
+message UpdateSeatStatusDetailReq {
+  string          seat_block_id = 1;
+  repeated string seat_ids      = 2;
+}
+
+message ListDecorationReq { string seat_map_id = 1; }
+
+//================================= RESPONSES ==================================
+
+message RetrieveSeatMapRes { SeatMap info = 1; }
+
+message ListSeatMapRes {
+  repeated SeatMap   items      = 1;
+  base.PaginationRes pagination = 2;
+}
+
+message ListSeatBlockRes { repeated SeatBlock items = 1; }
+message ListDecorationRes { repeated Sharp items = 1; }
+
+message UpdateSeatStatusRes {
+  bool            is_successed   = 1;
+  repeated string error_seat_ids = 2;
+}
+
+message RetrieveSeatBlockRes { SeatBlock info = 1; }

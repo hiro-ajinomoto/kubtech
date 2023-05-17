@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package partnership;
+option  go_package = "./;partnership";
+
+import "proto/partnership/base.proto";
+
+service CurrencyService {
+  rpc CreateCurrency(CreateCurrencyReq) returns (CreateCurrencyRes);
+  rpc UpdateCurrency(UpdateCurrencyReq) returns (Empty);
+  rpc DeleteCurrency(DeleteCurrencyReq) returns (Empty);
+  rpc RetrieveCurrency(RetrieveCurrencyReq) returns (RetrieveCurrencyRes);
+  rpc ListCurrency(ListCurrencyReq) returns (ListCurrencyRes);
+
+  rpc InternalRetrieveCurrency(InternalRetrieveCurrencyReq) returns (InternalRetrieveCurrencyRes);
+}
+
+//================================= BASIC ===================================
+
+message CurrencyBasicInfo {
+  string name = 1;
+  string code = 2;
+  string icon = 3;
+}
+
+message CurrencyListInfo {
+  string            id         = 1;
+  CurrencyBasicInfo info       = 2;
+  int64             created_at = 3;
+  int64             updated_at = 4;
+  string            created_by = 5;
+  string            updated_by = 6;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateCurrencyReq { CurrencyBasicInfo info = 1; }
+
+message UpdateCurrencyReq {
+  string            id   = 1;
+  CurrencyBasicInfo info = 2;
+}
+
+message DeleteCurrencyReq { string id = 1; }
+
+message ListCurrencyReq {
+  string               search_text = 1; // TODO: Vi và Toàn support
+  PaginationReq        pagination  = 2;
+  repeated OrderByItem order_by    = 3;
+}
+
+message RetrieveCurrencyReq { string id = 1; }
+
+message InternalRetrieveCurrencyReq { string id = 1; }
+
+//================================= RESPONSES ==================================
+
+message CreateCurrencyRes { string id = 1; }
+
+message RetrieveCurrencyRes {
+  string            id         = 1;
+  CurrencyBasicInfo info       = 3;
+  int64             created_at = 4;
+  int64             updated_at = 5;
+  string            created_by = 6;
+  string            updated_by = 7;
+}
+
+message ListCurrencyRes {
+  repeated CurrencyListInfo info       = 1;
+  PaginationRes             pagination = 2;
+}
+
+message InternalRetrieveCurrencyRes {
+  string            id   = 1;
+  CurrencyBasicInfo info = 2;
+}

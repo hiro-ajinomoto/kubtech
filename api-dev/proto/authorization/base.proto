@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+package authorization;
+option  go_package = "./;authorization";
+
+message Empty {}

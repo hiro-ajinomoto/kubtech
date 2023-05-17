@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package media.mobile;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/media/mobile;mobile";
+
+import "media/base_media.proto";
+import "media/mobile/base.proto";
+import "media/mobile/media.proto";
+
+service PlaylistService {
+  rpc PublicRetrievePlaylist(PublicRetrievePlaylistReq) returns (PublicRetrievePlaylistRes);
+  rpc PublicListPlaylist(PublicListPlaylistReq) returns (PublicListPlaylistRes);
+  rpc PublicListMediaByPlaylist(PublicListMediaByPlaylistReq) returns (PublicListMediaByPlaylistRes);
+  rpc PublicSearchMix(PublicSearchMixReq) returns (PublicSearchMixRes);
+  rpc PublicHomepage(PublicHomepagePlaylistReq) returns (PublicHomepagePlaylistRes);
+}
+
+//================================= TYPES ===================================
+
+message PlaylistInfo {
+  string          id            = 1;
+  string          title         = 2;
+  string          intro         = 3;
+  string          thumbnail_url = 4;
+  bool            is_public     = 5;
+  bool            is_premium    = 6;
+  repeated string hashtags      = 7;
+}
+message PublicMixInfo {
+  string id            = 1;
+  string title         = 2;
+  string type          = 3;
+  string thumbnail_url = 4;
+  bool   is_premium    = 5;
+}
+
+message HomepagePlaylistInfo {
+  string                   id            = 1;
+  string                   title         = 2;
+  string                   intro         = 3;
+  string                   thumbnail_url = 4;
+  bool                     is_public     = 5;
+  bool                     is_premium    = 6;
+  repeated string          hashtags      = 7;
+  repeated PublicMediaInfo medias        = 8;
+}
+
+//================================= PUBLIC REQUESTS ===================================
+
+message PublicRetrievePlaylistReq {
+  string id             = 1;
+  string partnership_id = 2;
+}
+
+message PublicHomepagePlaylistReq { string partnership_id = 1; }
+
+message PublicListPlaylistReq {
+  string               partnership_id = 1;
+  string               search_text    = 2;
+  PaginationReq        pagination     = 3;
+  repeated OrderByItem order_by       = 4;
+  string               hashtag        = 5;
+}
+message PublicSearchMixReq {
+  string               partnership_id = 1;
+  string               search_text    = 2;
+  PaginationReq        pagination     = 3;
+  repeated OrderByItem order_by       = 4;
+  string               hashtag        = 5;
+}
+message PublicListMediaByPlaylistReq {
+  string        playlist_id    = 1;
+  string        partnership_id = 2;
+  PaginationReq pagination     = 3;
+}
+
+//================================= RESPONSES ==================================
+
+message PublicListPlaylistRes {
+  repeated PlaylistInfo info       = 1;
+  PaginationRes         pagination = 2;
+}
+message PublicListMediaByPlaylistRes {
+  repeated PublicMediaInfo info       = 1;
+  PaginationRes            pagination = 2;
+}
+message PublicSearchMixRes {
+  repeated PublicMixInfo info       = 1;
+  PaginationRes          pagination = 2;
+}
+
+message PublicHomepagePlaylistRes { repeated HomepagePlaylistInfo playlists = 1; }
+
+message PublicRetrievePlaylistRes {
+  string                   id            = 1;
+  string                   title         = 2;
+  string                   intro         = 3;
+  string                   thumbnail_url = 4;
+  bool                     is_public     = 5;
+  bool                     is_premium    = 6;
+  repeated string          hashtags      = 7;
+  repeated PublicMediaInfo medias        = 8;
+}

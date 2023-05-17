@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package event.web_partnership;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/web_partnership;web_partnership";
+
+import "base/base.proto";
+import "event/web_partnership/base.proto";
+
+service SponsorService {
+  rpc CreateSponsor(CreateSponsorReq) returns (CreateSponsorRes);
+  rpc UpdateSponsor(UpdateSponsorReq) returns (base.Empty);
+  rpc DeleteSponsor(DeleteSponsorReq) returns (base.Empty);
+  rpc GetSponsorDetail(GetSponsorDetailReq) returns (GetSponsorDetailRes);
+  rpc ListSponsor(ListSponsorReq) returns (ListSponsorRes);
+}
+
+//================================= TYPES ===================================
+message SponsorBasicInfo {
+  string       name         = 1;
+  string       cover        = 2;
+  string       avatar       = 3;
+  string       intro        = 4;
+  repeated Url contact_urls = 5;
+}
+
+message SponsorInfo {
+  string       id           = 1;
+  string       name         = 2;
+  string       cover        = 3;
+  string       avatar       = 4;
+  string       intro        = 5;
+  repeated Url contact_urls = 6;
+  int64        created_at   = 7;
+  int64        updated_at   = 8;
+  string       created_by   = 9;
+  string       updated_by   = 10;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateSponsorReq { SponsorBasicInfo info = 1; }
+
+message UpdateSponsorReq {
+  string           id   = 1;
+  SponsorBasicInfo info = 2;
+}
+
+message DeleteSponsorReq { string id = 1; }
+
+message ListSponsorReq {
+  string             search_text     = 1; // TODO: Vi và Toàn support
+  base.PaginationReq pagination      = 2;
+  repeated base.OrderByItem order_by = 3;
+}
+
+message GetSponsorDetailReq { string id = 1; }
+
+//================================= RESPONSES ==================================
+
+message CreateSponsorRes { string id = 1; }
+
+message GetSponsorDetailRes {
+  string       id           = 1;
+  string       name         = 2;
+  string       cover        = 3;
+  string       avatar       = 4;
+  string       intro        = 5;
+  repeated Url contact_urls = 6;
+  int64        created_at   = 7;
+  int64        updated_at   = 8;
+  string       created_by   = 9;
+  string       updated_by   = 10;
+}
+
+message ListSponsorRes {
+  repeated SponsorInfo items      = 1;
+  base.PaginationRes   pagination = 2;
+}

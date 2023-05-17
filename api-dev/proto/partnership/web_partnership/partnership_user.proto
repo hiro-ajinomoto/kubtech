@@ -1,0 +1,116 @@
+syntax = "proto3";
+
+package partnership.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+import "proto/partnership/web_partnership/base.proto";
+
+service PartnershipUserService {
+  rpc CreateUser(CreateUserReq) returns (CreateUserRes);
+
+  // Fullfilment
+  rpc GetMe(GetMeReq) returns (GetMeRes);
+  rpc UpdateMe(UpdateMeReq) returns (Empty);
+  rpc ChangePassword(ChangePasswordReq) returns (Empty);
+
+  rpc GetBasicUsers(GetBasicUsersReq) returns (GetBasicUsersRes);
+
+  // Reset password
+  rpc SendOtpToResetPassword(SendOtpToResetPasswordReq) returns (SendOtpToResetPasswordRes);
+  rpc VerifyOtpToResetPassword(VerifyOtpToResetPasswordReq) returns (VerifyOtpToResetPasswordRes);
+  rpc ResetPassword(ResetPasswordReq) returns (Empty);
+
+  // Sub-account
+  rpc UpdateUser(UpdateUserReq) returns (Empty);
+  rpc DeleteUser(DeleteUserReq) returns (Empty);
+  rpc DisableUser(DisableUserReq) returns (Empty);
+}
+
+//================================= TYPES ===================================
+
+message UserInfo {
+  string  id              = 1;
+  int64   created_at      = 2;
+  int64   updated_at      = 3;
+  string  email           = 4;
+  string  password        = 5;
+  string  name            = 6;
+  string  profile_picture = 7;
+  string  description     = 8;
+  string  partnership_id  = 9;
+  Boolean is_owner        = 10;
+  string  phone_code      = 11;
+  string  phone_number    = 12;
+}
+message UserBasicInfo {
+  string id              = 1;
+  string email           = 2;
+  string name            = 3;
+  string profile_picture = 4;
+}
+//================================= REQUESTS ===================================
+
+message CreateUserReq {
+  string email           = 1;
+  string password        = 2;
+  string name            = 3;
+  string profile_picture = 4;
+  string description     = 5;
+  string partnership_id  = 6;
+  string phone_code      = 7;
+  string phone_number    = 8;
+}
+
+message UpdateMeReq {
+  string name            = 1;
+  string profile_picture = 2;
+  string description     = 3;
+}
+
+message ChangePasswordReq {
+  string old_password = 1;
+  string password     = 2;
+}
+
+message GetMeReq {}
+
+message SendOtpToResetPasswordReq {
+  string phone_code     = 1;
+  string phone_number   = 2;
+  string partnership_id = 3;
+}
+
+message VerifyOtpToResetPasswordReq {
+  string phone_code     = 1;
+  string phone_number   = 2;
+  string partnership_id = 3;
+  string otp            = 4;
+}
+
+message ResetPasswordReq { string new_password = 1; }
+
+message GetBasicUsersReq { repeated string ids = 1; }
+message UpdateUserReq {
+  string user_id         = 1;
+  string name            = 2;
+  string profile_picture = 3;
+  string description     = 4;
+}
+
+message DeleteUserReq { string user_id = 1; }
+
+message DisableUserReq { string user_id = 1; }
+
+//================================= RESPONSES ==================================
+
+message GetMeRes { UserInfo user_info = 1; }
+message GetBasicUsersRes { repeated UserBasicInfo items = 1; }
+
+message SendOtpToResetPasswordRes { uint32 time_remaining = 1; }
+
+message VerifyOtpToResetPasswordRes {
+  string access_token = 1;
+  uint64 expire_time  = 2;
+}
+
+message CreateUserRes { string user_id = 1; }

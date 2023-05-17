@@ -1,0 +1,230 @@
+syntax = "proto3";
+
+package event.web_partnership;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/web_partnership;web_partnership";
+
+import "base/base.proto";
+import "event/enum/event_state.proto";
+import "event/web_partnership/event_location.proto";
+import "event/web_partnership/artist.proto";
+import "event/web_partnership/sponsor.proto";
+
+service EventService {
+  rpc CreateEvent(CreateEventReq) returns (CreateEventRes);
+  rpc UpdateEvent(UpdateEventReq) returns (base.Empty);
+  rpc DeleteEvent(DeleteEventReq) returns (base.Empty);
+  rpc RetrieveEvent(RetrieveEventReq) returns (RetrieveEventRes);
+  rpc ListEvents(ListEventsReq) returns (ListEventsRes);
+
+  // rpc CreateEventSchedule(CreateScheduleReq) returns (CreateEventScheduleRes);
+  // rpc UpdateEventSchedule(UpdateScheduleReq) returns (base.Empty);
+  rpc UpsertEventSchedule(UpdateScheduleReq) returns (base.Empty);
+  rpc DeleteEventSchedule(DeleteEventScheduleReq) returns (base.Empty);
+  rpc ListEventSchedules(ListEventScheduleReq) returns (ListEventScheduleRes);
+}
+
+//================================= BASIC ===================================
+
+enum EventType {
+  EVENT_TYPE_INVALID = 0;
+  EVENT_TYPE_OFFLINE = 1;
+  EVENT_TYPE_ONLINE  = 2;
+}
+
+enum SearchEventStatus {
+  EVENT_FILTER_STATUS_NONE             = 0;
+  EVENT_FILTER_STATUS_SALE_COMING_SOON = 1;
+  EVENT_FILTER_STATUS_ON_SALE          = 2;
+  EVENT_FILTER_STATUS_STOP_SALE        = 3;
+  EVENT_FILTER_STATUS_SOLD_OUT         = 4;
+  EVENT_FILTER_STATUS_UPCOMING         = 5;
+  EVENT_FILTER_STATUS_GOING_ON         = 6;
+  EVENT_FILTER_STATUS_ENDED            = 7;
+  EVENT_FILTER_STATUS_HOT              = 8;
+  EVENT_FILTER_STATUS_PUBLISHED        = 9;
+  EVENT_FILTER_STATUS_UNPUBLISHED      = 10;
+}
+
+enum EventStatus {
+  EVENT_DISPLAY_STATUS_NONE             = 0;
+  EVENT_DISPLAY_STATUS_SALE_COMING_SOON = 1;
+  EVENT_DISPLAY_STATUS_ON_SALE          = 2;
+  EVENT_DISPLAY_STATUS_STOP_SALE        = 3;
+  EVENT_DISPLAY_STATUS_SOLD_OUT         = 4;
+  EVENT_DISPLAY_STATUS_UPCOMING         = 5;
+  EVENT_DISPLAY_STATUS_GOING_ON         = 6;
+  EVENT_DISPLAY_STATUS_ENDED            = 7;
+}
+
+message EventBasicInfo { // only be used in create event flow
+  string name              = 1;
+  string code              = 2;
+  int64  duration          = 3;
+  string price_description = 4;
+  string description       = 5;
+}
+
+message EventInfo {
+  string                name                = 1;
+  string                code                = 2;
+  int64                 duration            = 3;
+  string                price_description   = 4;
+  string                description         = 5;
+  string                location            = 6; // location_id
+  int64                 booking_start_time  = 7;
+  int64                 booking_end_time    = 8; // unuse yet
+  repeated string       hashtags            = 9;
+  repeated string       event_image_urls    = 10;
+  repeated string       programs_image_urls = 11;
+  bool                  is_hot              = 12;
+  bool                  is_public           = 13;
+  repeated string       artists             = 14;
+  repeated EventSponsor sponsors            = 15;
+  event.enum
+  .EventState state             = 16;
+  string      state_description = 17;
+}
+
+message Event {
+  string                        id                  = 1;
+  string                        name                = 2;
+  string                        code                = 3;
+  int64                         duration            = 4;
+  string                        price_description   = 5;
+  string                        description         = 6;
+  int64                         booking_start_time  = 7;
+  int64                         booking_end_time    = 8;
+  string                        timezone            = 9;
+  repeated string               hashtags            = 10;
+  repeated string               event_image_urls    = 11;
+  repeated string               programs_image_urls = 12;
+  bool                          is_hot              = 13;
+  bool                          is_public           = 14;
+  repeated ArtistInfo           artists             = 15;
+  repeated EventSponsorFullInfo sponsors            = 16;
+  int64                         created_at          = 17;
+  int64                         updated_at          = 18;
+  string                        created_by          = 19;
+  string                        updated_by          = 20;
+  EventLocationInfo             location            = 21;
+  EventStats                    stats               = 22;
+  event.enum
+  .EventState state             = 23;
+  string      state_description = 24;
+}
+
+message EventListInfo {
+  string          id                 = 1;
+  string          name               = 2;
+  string          code               = 3;
+  int64           duration           = 4;
+  string          price_description  = 5;
+  string          description        = 6;
+  string          location           = 7; // location_id
+  int64           booking_start_time = 8;
+  int64           booking_end_time   = 9; // unuse yet
+  repeated string hashtags           = 10;
+  repeated string event_image_urls   = 11;
+  bool            is_hot             = 12;
+  bool            is_public          = 13;
+  EventStats      stats              = 14;
+}
+
+message EventStats {
+  int64       start_time           = 1;
+  int64       end_time             = 2;
+  EventStatus status               = 3;
+  bool        is_booking_available = 4;
+  bool        is_sold_out          = 5;
+  int32       number_of_seat       = 6;
+}
+
+message EventSponsor {
+  string rank       = 1;
+  string sponsor_id = 2;
+}
+
+message EventSponsorFullInfo {
+  string      rank    = 1;
+  SponsorInfo sponsor = 2;
+}
+
+message EventSeatMap {
+  string id          = 1;
+  string name        = 2;
+  string map_picture = 3;
+  string description = 4;
+}
+
+message EventScheduleBasicInfo {
+  string          event_id            = 1;
+  string          name                = 2;
+  int64           start_time          = 3;
+  int64           end_time            = 4; // placeholder
+  int64           check_in_start_time = 5;
+  int64           check_in_end_time   = 6;
+  bool            is_public           = 7;
+  EventType       event_type          = 8;
+  repeated string seat_maps_ids       = 9;
+}
+
+message EventScheduleInfo {
+  string                id                  = 1;
+  string                event_id            = 2;
+  string                name                = 3;
+  int64                 start_time          = 4;
+  int64                 end_time            = 5;
+  int64                 check_in_start_time = 6;
+  int64                 check_in_end_time   = 7;
+  bool                  is_public           = 8;
+  EventType             event_type          = 9;
+  repeated EventSeatMap seat_maps           = 10;
+  bool                  is_sold_out         = 11;
+}
+//================================= REQUESTS ===================================
+
+message CreateEventReq { EventBasicInfo info = 1; }
+
+message UpdateEventReq {
+  string    id   = 1;
+  EventInfo info = 2;
+}
+
+message RetrieveEventReq { string id = 1; }
+
+message DeleteEventReq { string id = 1; }
+
+message CreateScheduleReq { EventScheduleBasicInfo info = 1; }
+
+message UpdateScheduleReq {
+  string                 id   = 1;
+  EventScheduleBasicInfo info = 2;
+}
+message DeleteEventScheduleReq { string id = 1; }
+
+message ListEventsReq {
+  string             search_text         = 1;
+  SearchEventStatus  status              = 2;
+  string             is_public           = 3;
+  base.PaginationReq pagination          = 4;
+  repeated base.OrderByItem  order_by    = 5;
+  repeated SearchEventStatus statuses    = 6;
+  repeated SearchEventStatus or_statuses = 7;
+}
+
+message ListEventScheduleReq { string event_id = 1; }
+
+//================================= RESPONSES ==================================
+
+message CreateEventRes { string id = 1; }
+
+message RetrieveEventRes { Event info = 1; }
+
+message ListEventsRes {
+  repeated EventListInfo items      = 1;
+  base.PaginationRes     pagination = 2;
+}
+
+message CreateEventScheduleRes { string id = 1; }
+
+message ListEventScheduleRes { repeated EventScheduleInfo items = 1; }

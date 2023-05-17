@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package customer.mobile;
+option  go_package = "./mobile;mobile";
+
+enum Boolean {
+  BOOLEAN_INVALID = 0;
+  BOOLEAN_TRUE    = 1;
+  BOOLEAN_FALSE   = 2;
+}
+
+message PaginationReq {
+  uint32 page_number = 1;
+  uint32 page_limit  = 2;
+}
+
+message PaginationRes {
+  uint32 page_current = 1;
+  uint32 page_limit   = 2;
+  uint32 total_page   = 3;
+  int64  total_record = 4;
+}
+
+message OrderByItem {
+  bool   desc  = 1;
+  string field = 2;
+}
+
+message DefaultRes { bool result = 1; }
+
+message Coordinates {
+  double lat  = 1;
+  double long = 2;
+}
+
+message Empty {}

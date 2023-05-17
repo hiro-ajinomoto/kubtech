@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package wallet.mobile;
+option  go_package = "./mobile;mobile"; // file will be export and moved to the (api generator) api/gen/go/wallet/mobile
+
+import "proto/wallet/mobile/base.proto"; // why need to import
+
+service WalletService {
+  rpc TopUp(TopUpReq) returns (TopUpRes);
+  rpc CalculateTopUpAmount(CalculateTopUpAmountReq) returns (CalculateTopUpAmountRes);
+  rpc GetWalletInfo(GetWalletInfoReq) returns (GetWalletInfoRes);
+}
+
+//================================= TYPES ===================================
+
+enum TopUpPaymentAction {
+  TOP_UP_PAYMENT_ACTION_WEB_VIEW   = 0;
+  TOP_UP_PAYMENT_ACTION_BROWSER    = 1;
+  TOP_UP_PAYMENT_ACTION_IN_APP_SDK = 2;
+}
+
+message Wallet {
+  string id             = 1;
+  string user_id        = 2;
+  string partnership_id = 3;
+  double balance        = 4;
+}
+
+message TopUpPaymentInfo {
+  string             transaction_id     = 1;
+  TransactionStatus  transaction_status = 2;
+  double             amount             = 3;
+  double             fee                = 4;
+  double             total_price        = 5;
+  string             currency_code      = 6;
+  TopUpPaymentMethod payment_method     = 7;
+}
+
+message TopUpPaymentMethod {
+  string id             = 1;
+  string name           = 2;
+  string code           = 3;
+  int32  method         = 4;
+  double fee            = 5;
+  double additional_fee = 6;
+  string display_fee    = 7;
+  string icon           = 8;
+}
+
+// supported payment SDK
+message Payoo {
+  string order_xml      = 1;
+  string order_checksum = 2;
+}
+//
+
+message TopUpPaymentSDK { Payoo payoo = 1; }
+
+message TopUpPaymentActionData {
+  string          webview_url = 1;
+  TopUpPaymentSDK sdk         = 2;
+}
+
+//================================= REQUESTS ===================================
+
+message GetWalletInfoReq {}
+
+message TopUpReq {
+  double amount              = 1;
+  string payment_method_code = 2;
+  string currency_code       = 3;
+}
+
+message CalculateTopUpAmountReq {
+  double amount              = 1;
+  string payment_method_code = 2;
+  string currency_code       = 3;
+}
+
+//================================= RESPONSE ===================================
+
+message GetWalletInfoRes { Wallet wallet = 1; }
+
+message TopUpRes {
+  bool                   success     = 1;
+  TopUpPaymentAction     action      = 2;
+  TopUpPaymentActionData action_data = 3;
+  TopUpPaymentInfo       payment     = 4;
+}
+
+message CalculateTopUpAmountRes {
+  double             amount         = 3;
+  double             fee            = 4;
+  double             total_price    = 5;
+  string             currency_code  = 6;
+  TopUpPaymentMethod payment_method = 7;
+}

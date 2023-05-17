@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package ticket.mobile;
+option  go_package = "./mobile;mobile";
+
+service TransferredTicketService {
+  rpc GetMyTransferredTicketByOrderId(GetMyTransferredTicketByOrderIdReq) returns (GetMyTransferredTicketByOrderIdRes);
+}
+
+//================================= TYPES ===================================
+
+message TransferredTicketInfo {
+  string                     id                           = 1;
+  int64                      created_at                   = 2;
+  int64                      updated_at                   = 3;
+  string                     order_id                     = 4;
+  TransferredTicketEventInfo event_info                   = 5;
+  TransferredTicketSeatInfo  seat_info                    = 6;
+  TransferredTicketUserInfo  user_info                    = 7;
+  bool                       is_enabled_verification_code = 8;
+  string                     partnership_id               = 9;
+  TransferredTicketUserInfo  receiver_info                = 10;
+}
+
+message TransferredTicketPriceSimpleInfo {
+  string                        id       = 1;
+  string                        name     = 2;
+  string                        icon     = 3;
+  double                        price    = 4;
+  TransferredTicketCurrencyInfo currency = 5;
+}
+
+message TransferredTicketCurrencyInfo {
+  string name = 1;
+  string code = 2;
+  string icon = 3;
+}
+
+message TransferredTicketEventLocation {
+  string id       = 1;
+  string address  = 2;
+  string ward     = 3;
+  string district = 4;
+  string city     = 5;
+  string country  = 6;
+}
+
+message TransferredTicketEventInfo {
+  string                         event_id           = 1;
+  string                         name               = 2;
+  int64                          start_time         = 3;
+  int64                          end_time           = 4;
+  int64                          checkin_start_time = 5;
+  int64                          checkin_end_time   = 6;
+  TransferredTicketEventLocation location           = 7;
+  string                         timezone           = 8;
+}
+
+message TransferredTicketUserInfo {
+  string user_id         = 1;
+  string user_full_name  = 2;
+  string user_phone      = 3; // what if a child?
+  string user_email      = 4;
+  string user_address    = 5;
+  string user_image      = 6; // required at inspector
+  string user_phone_code = 7;
+}
+
+message TransferredTicketSeatInfo {
+  string                           id                    = 1;
+  string                           name                  = 2;
+  TransferredTicketPriceSimpleInfo price                 = 3;
+  string                           price_block_id        = 4;
+  string                           price_block_name      = 5;
+  string                           general_seat_map_id   = 6;
+  string                           general_seat_map_name = 7;
+  string                           seat_type_name        = 8;
+}
+
+//================================= REQUESTS ===================================
+
+message GetMyTransferredTicketByOrderIdReq { string order_id = 1; }
+
+//================================= RESPONSE ===================================
+
+message GetMyTransferredTicketByOrderIdRes { repeated TransferredTicketInfo info = 1; }

@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package customer.mobile;
+option  go_package = "./mobile;mobile";
+
+import "proto/customer/mobile/base.proto";
+
+service AuthEmailService {
+  rpc SendOtpByEmail(SendOtpByEmailReq) returns (SendOtpByEmailRes);
+  rpc VerifyEmail(VerifyEmailReq) returns (Empty);
+  rpc VerifyOtpToResetPasswordByEmail(VerifyOtpToResetPasswordByEmailReq) returns (VerifyOtpToResetPasswordByEmailRes);
+  rpc ResetPasswordByEmail(ResetPasswordByEmailReq) returns (Empty);
+
+  rpc SendOtpSecurityByEmail(SendOtpSecurityByEmailReq) returns (SendOtpSecurityByEmailRes);
+  rpc VerifyOtpSecurityByEmail(VerifyOtpSecurityByEmailReq) returns (VerifyOtpSecurityByEmailRes);
+
+  rpc SendOtpToChangeEmailByEmail(SendOtpToChangeEmailByEmailReq) returns (SendOtpToChangeEmailByEmailRes);
+  rpc VerifyOtpToChangeEmailByEmail(VerifyOtpToChangeEmailByEmailReq) returns (Empty);
+}
+
+enum EmailOtpType {
+  EMAIL_OTP_TYPE_INVALID                     = 0;
+  EMAIL_OTP_TYPE_CUSTOMER_EMAIL_VERIFICATION = 1;
+  EMAIL_OTP_TYPE_CUSTOMER_RESET_PASSWORD     = 2;
+}
+
+enum EmailOtpSecurityType {
+  EMAIL_OTP_SECURITY_TYPE_INVALID             = 0;
+  EMAIL_OTP_SECURITY_TYPE_CHANGE_PHONE_NUMBER = 1;
+  EMAIL_OTP_SECURITY_TYPE_CHANGE_EMAIL        = 2;
+}
+
+//================================= REQUESTS ===================================
+
+message SendOtpByEmailReq {
+  string       email          = 1;
+  string       partnership_id = 2;
+  EmailOtpType type           = 3;
+}
+
+message SendOtpSecurityByEmailReq { EmailOtpSecurityType type = 1; }
+
+message ResetPasswordByEmailReq { string new_password = 1; }
+
+message VerifyEmailReq {
+  string email          = 1;
+  string partnership_id = 2;
+  string otp            = 3;
+}
+
+message VerifyOtpToResetPasswordByEmailReq {
+  string otp            = 1;
+  string email          = 2;
+  string partnership_id = 3;
+}
+
+message VerifyOtpSecurityByEmailReq {
+  string               otp  = 1;
+  EmailOtpSecurityType type = 2;
+}
+
+message SendOtpToChangeEmailByEmailReq {
+  string token = 1;
+  string email = 2;
+}
+
+message VerifyOtpToChangeEmailByEmailReq {
+  string token = 1;
+  string email = 2;
+  string otp   = 3;
+}
+
+//================================= RESPONSE ===================================
+message SendOtpByEmailRes { uint32 time_remaining = 1; }
+
+message SendOtpSecurityByEmailRes { uint32 time_remaining = 1; }
+
+message VerifyOtpToResetPasswordByEmailRes {
+  string access_token = 1;
+  uint64 expire_time  = 2;
+}
+
+message VerifyOtpSecurityByEmailRes {
+  string token       = 1;
+  uint64 expire_time = 2;
+}
+
+message SendOtpToChangeEmailByEmailRes { uint32 time_remaining = 1; }

@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package partner.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+import "proto/partner/web_partnership/base.proto";
+
+service AuthService {
+  rpc Login(LoginReq) returns (LoginRes);
+  rpc RefreshToken(RefreshTokenReq) returns (RefreshTokenRes);
+  rpc Logout(Empty) returns (Empty);
+
+  rpc SendOtpToResetPassword(SendOtpToResetPasswordReq) returns (SendOtpToResetPasswordRes);
+  rpc VerifyOtpToResetPassword(VerifyOtpToResetPasswordReq) returns (VerifyOtpToResetPasswordRes);
+  rpc ResetPassword(ResetPasswordReq) returns (Empty);
+}
+
+//================================= REQUESTS ===================================
+
+message LoginReq {
+  string phone_code     = 1;
+  string phone_number   = 2;
+  string password       = 3;
+  string partnership_id = 4;
+}
+
+message SendOtpToResetPasswordReq {
+  string phone_code      = 1;
+  string phone_number    = 2;
+  string partnership_id  = 3;
+  string recaptcha_token = 4;
+}
+
+message VerifyOtpToResetPasswordReq {
+  string phone_code     = 1;
+  string phone_number   = 2;
+  string otp            = 3;
+  string partnership_id = 4;
+  string firebase_sid   = 5;
+}
+
+message ResetPasswordReq { string new_password = 1; }
+
+message RefreshTokenReq { string refresh_token = 1; }
+
+//================================= RESPONSES ==================================
+
+message LoginRes {
+  string access_token  = 1;
+  string refresh_token = 2;
+  uint64 expired_time  = 3;
+}
+
+message SendOtpToResetPasswordRes { uint32 time_remaining = 1; }
+
+message VerifyOtpToResetPasswordRes {
+  string access_token = 1;
+  uint64 expired_time = 2;
+}
+
+message RefreshTokenRes {
+  string access_token  = 1;
+  string refresh_token = 2;
+  uint64 expire_time   = 3;
+}

@@ -1,0 +1,206 @@
+syntax = "proto3";
+
+package ticket.web_inspector;
+option  go_package = "./web_inspector;web_inspector";
+
+import "ticket/web_inspector/base.proto";
+
+service InspectorService {
+  rpc CheckIn(CheckInReq) returns (Empty);
+  rpc MappingUserInfoToTicketAndCheckIn(MappingUserInfoToTicketAndCheckInReq) returns (Empty);
+  rpc ListCheckInLogs(ListCheckInLogsReq) returns (ListCheckInLogsRes);
+  rpc MappingUserInfoToTicket(MappingUserInfoToTicketReq) returns (Empty);
+
+  rpc GetTicketByCode(GetTicketByCodeReq) returns (GetTicketByCodeRes);
+  rpc GetTicketByPhone(GetTicketByPhoneReq) returns (GetTicketByPhoneRes);
+  rpc GetTicketByEmail(GetTicketByEmailReq) returns (GetTicketByEmailRes);
+
+  rpc GetCurrentCheckinEvent(GetCurrentCheckinEventReq) returns (GetCurrentCheckinEventRes);
+  rpc GetUpcomingCheckinEvent(GetUpcomingCheckinEventReq) returns (GetUpcomingCheckinEventRes);
+}
+
+//================================== TYPE ====================================
+
+enum InspectorTicketStatus {
+  INSPECTOR_TICKET_STATUS_INVALID    = 0;
+  INSPECTOR_TICKET_STATUS_NOT_USED   = 1;
+  INSPECTOR_TICKET_STATUS_CHECKED_IN = 2;
+}
+
+enum InspectorTicketType {
+  INSPECTOR_TICKET_TYPE_BUY      = 0;
+  INSPECTOR_TICKET_TYPE_RELEASE  = 1;
+  INSPECTOR_TICKET_TYPE_TRANSFER = 2;
+}
+
+message InspectorTicketInfo {
+  string                   id                           = 1;
+  int64                    created_at                   = 2;
+  int64                    updated_at                   = 3;
+  string                   order_id                     = 4;
+  InspectorTicketEventInfo event_info                   = 5;
+  InspectorTicketSeatInfo  seat_info                    = 6;
+  InspectorTicketStatus    status                       = 7;
+  string                   secret_code                  = 8; // random
+  string                   verification_code            = 9; // 6 số
+  InspectorTicketUserInfo  user_info                    = 10;
+  bool                     is_enabled_verification_code = 11;
+  string                   partnership_id               = 12;
+  InspectorTicketType      ticket_type                  = 13;
+  string                   owner_id                     = 14;
+  string                   note                         = 15;
+}
+
+message InspectorTicketPriceSimpleInfo {
+  string                      id       = 1;
+  string                      name     = 2;
+  string                      icon     = 3;
+  double                      price    = 4;
+  InspectorTicketCurrencyInfo currency = 5;
+}
+
+message InspectorTicketCurrencyInfo {
+  string name = 1;
+  string code = 2;
+  string icon = 3;
+}
+
+message InspectorTicketEventLocation {
+  string id       = 1;
+  string address  = 2;
+  string ward     = 3;
+  string district = 4;
+  string city     = 5;
+  string country  = 6;
+}
+
+message InspectorTicketEventInfo {
+  string                       event_id           = 1;
+  string                       name               = 2;
+  int64                        start_time         = 3;
+  int64                        end_time           = 4;
+  int64                        checkin_start_time = 5;
+  int64                        checkin_end_time   = 6;
+  InspectorTicketEventLocation location           = 7;
+  string                       timezone           = 8;
+}
+
+message InspectorTicketCheckinEventInfo {
+  string                       event_id              = 1;
+  string                       name                  = 2;
+  int64                        start_time            = 3;
+  int64                        end_time              = 4;
+  int64                        checkin_start_time    = 5;
+  int64                        checkin_end_time      = 6;
+  InspectorTicketEventLocation location              = 7;
+  string                       timezone              = 8;
+  string                       partnership_id        = 9;
+  string                       general_seat_map_id   = 10;
+  repeated Media               medias                = 11;
+  string                       seat_map_url          = 12;
+  string                       instruction_url       = 13;
+  string                       safety_form_url       = 14;
+  bool                         is_live               = 15; // caculate in server
+  string                       general_seat_map_name = 16;
+}
+
+message InspectorTicketUserInfo {
+  string user_full_name       = 1;
+  string user_phone           = 2;
+  string user_email           = 3;
+  string user_address         = 4;
+  string user_image           = 5;
+  string user_phone_code      = 6;
+  bool   is_declared_covid    = 7;
+  string user_inspector_image = 8;
+}
+
+message InspectorTicketSeatInfo {
+  string                         id                    = 1;
+  string                         name                  = 2;
+  InspectorTicketPriceSimpleInfo price                 = 3;
+  string                         price_block_id        = 4;
+  string                         price_block_name      = 5;
+  string                         general_seat_map_id   = 6;
+  string                         general_seat_map_name = 7;
+  string                         seat_type_name        = 8;
+}
+
+message CheckInLogInfo {
+  string ticket_id      = 1;
+  string user_id        = 2;
+  int64  time           = 3;
+  string partnership_id = 4;
+}
+
+//================================= REQUESTS ===================================
+
+message CheckInReq {
+  string ticket_id         = 1;
+  string verification_code = 2; // 6 số
+}
+
+message MappingUserInfoToTicketAndCheckInReq {
+  string ticket_id            = 1;
+  string user_full_name       = 2;
+  string user_phone           = 3;
+  string user_email           = 4;
+  string user_address         = 5;
+  string user_image           = 6; // required
+  string user_phone_code      = 7;
+  string verification_code    = 8; // 6 số
+  string user_inspector_image = 9;
+}
+
+message ListCheckInLogsReq {
+  string ticket_id      = 1;
+  string partnership_id = 2;
+}
+
+message GetTicketByCodeReq {
+  string secret_code    = 1;
+  string partnership_id = 2;
+}
+
+message GetTicketByPhoneReq {
+  string user_phone        = 1;
+  string user_phone_code   = 2;
+  string verification_code = 3;
+  string partnership_id    = 4;
+}
+
+message GetTicketByEmailReq {
+  string user_email        = 1;
+  string verification_code = 2;
+  string partnership_id    = 3;
+}
+
+message GetCurrentCheckinEventReq {}
+
+message GetUpcomingCheckinEventReq {}
+
+message MappingUserInfoToTicketReq {
+  string ticket_id            = 1;
+  string user_full_name       = 2;
+  string user_phone           = 3;
+  string user_email           = 4;
+  string user_address         = 5;
+  string user_image           = 6;
+  string user_phone_code      = 7;
+  string verification_code    = 8;
+  string user_inspector_image = 9;
+}
+
+//================================= RESPONSE ===================================
+
+message ListCheckInLogsRes { repeated CheckInLogInfo logs = 1; }
+
+message GetTicketByPhoneRes { InspectorTicketInfo info = 1; }
+
+message GetTicketByEmailRes { InspectorTicketInfo info = 1; }
+
+message GetTicketByCodeRes { InspectorTicketInfo info = 1; }
+
+message GetCurrentCheckinEventRes { InspectorTicketCheckinEventInfo event_info = 1; }
+
+message GetUpcomingCheckinEventRes { repeated InspectorTicketCheckinEventInfo event_infos = 1; }

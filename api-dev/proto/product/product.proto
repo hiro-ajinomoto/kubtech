@@ -1,0 +1,149 @@
+syntax = "proto3";
+
+package product;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/product;product";
+
+import "product/base.proto";
+
+service ProductService {
+  rpc CreateProduct(CreateProductReq) returns (CreateProductRes);
+  rpc UpdateProduct(UpdateProductReq) returns (Empty);
+  rpc DeleteProduct(DeleteProductReq) returns (Empty);
+  rpc RetrieveProduct(RetrieveProductReq) returns (RetrieveProductRes);
+
+  rpc PublicRetrieveProduct(PublicRetrieveProductReq) returns (PublicRetrieveProductRes);
+  rpc PublicListProduct(PublicListProductReq) returns (PublicListProductRes);
+
+  rpc InternalListProductByIds(InternalListProductByIdsReq) returns (InternalListProductByIdsRes);
+}
+
+//=================================== TYPES ====================================
+
+message ProductInfo {
+  string              id                 = 1;
+  int64               created_at         = 2;
+  int64               updated_at         = 3;
+  string              created_by         = 4;
+  string              updated_by         = 5;
+  bool                active             = 6;
+  string              name               = 7;
+  string              trailer_url        = 8;
+  repeated Media      medias             = 9;
+  repeated string     tags               = 10;
+  int64               booking_start_time = 11;
+  int64               booking_end_time   = 12;
+  int64               duration           = 13; // in ms
+  int64               quantity           = 14;
+  string              sku                = 15;
+  double              listed_price       = 16;
+  double              discount_percent   = 17;
+  double              price              = 18;
+  bool                rental             = 29;
+  string              uom                = 20; // unit of measurement
+  string              barcode            = 21;
+  int32               weight             = 22; // in kg
+  int32               volume             = 25; // in m3
+  int32               rating_value       = 26;
+  int64               rating_count       = 27;
+  ProductCurrencyInfo currency           = 28;
+  string              brand              = 39;
+  string              description        = 30;
+  bool                limited            = 31;
+  bool                in_booking         = 32;
+  string              partnership_id     = 33;
+}
+
+message ProductCurrencyInfo {
+  string id   = 1;
+  string name = 2;
+  string code = 3;
+  string icon = 4;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateProductReq {
+  string              name               = 1;
+  string              trailer_url        = 2;
+  repeated Media      medias             = 3;
+  repeated string     tags               = 4;
+  int64               booking_start_time = 5;
+  int64               booking_end_time   = 6;
+  int64               duration           = 7; // in ms
+  int64               quantity           = 8;
+  string              sku                = 9;
+  double              listed_price       = 10;
+  double              discount_percent   = 11;
+  bool                rental             = 12;
+  string              uom                = 13; // unit of measurement
+  int32               weight             = 14; // in kg
+  int32               volume             = 15; // in m3
+  ProductCurrencyInfo currency           = 16;
+  string              brand              = 17;
+  string              description        = 18;
+  bool                limited            = 19;
+}
+
+message UpdateProductReq {
+  string              id                 = 1;
+  string              name               = 2;
+  string              trailer_url        = 3;
+  repeated Media      medias             = 4;
+  repeated string     tags               = 5;
+  int64               booking_start_time = 6;
+  int64               booking_end_time   = 7;
+  int64               duration           = 8; // in ms
+  int64               quantity           = 9;
+  string              sku                = 10;
+  double              listed_price       = 11;
+  double              discount_percent   = 12;
+  bool                rental             = 13;
+  string              uom                = 14; // unit of measurement
+  int32               weight             = 15; // in kg
+  int32               volume             = 16; // in m3
+  ProductCurrencyInfo currency           = 17;
+  string              brand              = 18;
+  string              description        = 19;
+  bool                limited            = 20;
+}
+
+message DeleteProductReq { string id = 1; }
+
+message PublicListProductReq {
+  string               search         = 1;
+  PaginationReq        pagination     = 2;
+  repeated OrderByItem order_by       = 3;
+  string               partnership_id = 4;
+}
+
+message RetrieveProductReq { string id = 1; }
+
+message PublicRetrieveProductReq {
+  string id             = 1;
+  string partnership_id = 2;
+}
+
+message InternalListProductByIdsReq { repeated string ids = 1; }
+
+//================================= RESPONSES ==================================
+
+message CreateProductRes { string id = 1; }
+
+message RetrieveProductRes {
+  ProductInfo info           = 1;
+  bool        bought         = 2;
+  int64       remaining_time = 3;
+}
+
+message PublicRetrieveProductRes {
+  ProductInfo info           = 1;
+  bool        bought         = 2;
+  int64       remaining_time = 3;
+}
+
+message InternalListProductByIdsRes { repeated ProductInfo infos = 1; }
+
+message PublicListProductRes {
+  repeated ProductInfo info       = 1;
+  PaginationRes        pagination = 2;
+}

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package product.web_admin;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/product/web_admin;web_admin";
+
+import "product/web_admin/base.proto";
+
+service SeatService {
+  rpc MigrationSeat(MigrationSeatReq) returns (Empty);
+  rpc StreamSeats(StreamSeatsReq) returns (Empty);
+}
+
+//================================= TYPES ===================================
+
+//================================= REQUESTS ===================================
+
+message MigrationSeatReq {}
+
+message StreamSeatsReq {}
+
+//================================= RESPONSE ===================================

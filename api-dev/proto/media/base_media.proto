@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package media;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/media;media";
+
+message OrderByItem {
+  bool   desc  = 1;
+  string field = 2;
+}
+
+message Empty {}

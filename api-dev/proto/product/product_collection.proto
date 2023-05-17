@@ -1,0 +1,156 @@
+syntax = "proto3";
+
+package product;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/product;product";
+
+import "product/base.proto";
+
+service ProductCollectionService {
+  rpc GetMyProductCollection(GetMyProductCollectionReq) returns (GetMyProductCollectionRes);
+  rpc GetMyProductCollectionByOrderId(GetMyProductCollectionByOrderIdReq) returns (GetMyProductCollectionByOrderIdRes);
+  rpc ListMyProductCollections(ListMyProductCollectionReq) returns (ListMyProductCollectionsRes);
+
+  rpc InternalCheckProductCollection(InternalCheckProductCollectionReq) returns (InternalCheckProductCollectionRes);
+  rpc InternalCheckProductIsBought(InternalCheckProductIsBoughtReq) returns (InternalCheckProductIsBoughtRes);
+}
+
+//=================================== TYPES ====================================
+enum ProductOrderPaymentMethod {
+  PRODUCT_ORDER_PAYMENT_METHOD_INVALID             = 0;
+  PRODUCT_ORDER_PAYMENT_METHOD_PAYPAL              = 1;
+  PRODUCT_ORDER_PAYMENT_METHOD_VNPAY_EWALLET       = 2;                // ví vnpay
+  PRODUCT_ORDER_PAYMENT_METHOD_VNPAY_CREDITCARD    = 3;                // vnpay với visa, master, JCB
+  PRODUCT_ORDER_PAYMENT_METHOD_VNPAY_BANKTRANSFER  = 4;                // vnpay với các ngân hàng trong nước VN
+  PRODUCT_ORDER_PAYMENT_METHOD_VNPAY_QRCODE        = 5;                // vnpay quét mã QR
+  PRODUCT_ORDER_PAYMENT_METHOD_MANUAL_BANKTRANSFER = 6;                // thanh toán ck vào tk theo cú pháp
+  PRODUCT_ORDER_PAYMENT_METHOD_MOMO                = 7;                // ví momo
+  PRODUCT_ORDER_PAYMENT_METHOD_TWO_CHECKOUT        = 8;                // two checkout
+  PRODUCT_ORDER_PAYMENT_METHOD_PAYOO_CREDITCARD    = 9;                // payoo với thẻ quốc tế
+  PRODUCT_ORDER_PAYMENT_METHOD_PAYOO_DOMESTIC_CARD = 10;               // payoo với thẻ nội địa
+  PRODUCT_ORDER_PAYMENT_METHOD_PAYOO_QRCODE        = 11;               // payoo quét mã QR
+  PRODUCT_ORDER_PAYMENT_METHOD_ONE_PAY_CREDITCARD  = 12;               // onepay với thẻ quốc tế
+  PRODUCT_ORDER_PAYMENT_METHOD_ONE_PAY_CREDITCARD_DOMESTIC_ISSUE = 13; // onepay với thẻ quốc tế phát hành trong nước
+  PRODUCT_ORDER_PAYMENT_METHOD_ONE_PAY_DOMESTIC_CARD = 14;             // onepay với thẻ nội địa
+  PRODUCT_ORDER_PAYMENT_METHOD_ONE_PAY_QRCODE        = 15;             // onepay quét mã QR
+}
+
+message ProductCollectionInfo {
+  string                           id             = 1;
+  int64                            created_at     = 2;
+  int64                            updated_at     = 3;
+  ProductCollectionProductInfo     product_info   = 4;
+  ProductCollectionUserInfo        user_info      = 5;
+  string                           partnership_id = 6;
+  ProductCollectionOrderSimpleInfo order_info     = 7;
+  int64                            quantity       = 8;
+  int64                            expired_time   = 9;
+  int64                            remaining_time = 10;
+}
+
+message ProductCollectionProductInfo {
+  string                               id                 = 1;
+  bool                                 active             = 6;
+  string                               name               = 7;
+  string                               trailer_url        = 8;
+  repeated Media                       medias             = 9;
+  repeated string                      tags               = 10;
+  int64                                booking_start_time = 11;
+  int64                                booking_end_time   = 12;
+  int64                                duration           = 13;
+  int64                                quantity           = 14;
+  string                               sku                = 15;
+  double                               listed_price       = 16;
+  double                               discount_percent   = 17;
+  double                               price              = 18;
+  bool                                 rental             = 29;
+  string                               uom                = 20;
+  string                               barcode            = 21;
+  int32                                weight             = 22;
+  int32                                volume             = 25;
+  int32                                rating_value       = 26;
+  int64                                rating_count       = 27;
+  ProductCollectionProductCurrencyInfo currency           = 28;
+  string                               brand              = 39;
+  string                               description        = 30;
+  bool                                 limited            = 31;
+}
+
+message ProductCollectionUserInfo {
+  string id              = 1;
+  string email           = 2;
+  string name            = 3;
+  string phone_number    = 4;
+  string phone_code      = 5;
+  string profile_picture = 6;
+  string addr            = 7;
+  string city            = 8;
+  string district        = 9;
+  string ward            = 10;
+  string description     = 11;
+}
+
+message ProductCollectionOrderSimpleInfo {
+  string                        id             = 1;
+  string                        cart_id        = 2;
+  ProductOrderPaymentMethodInfo payment_method = 3;
+  string                        order_code     = 4;
+  string                        payment_id     = 5;
+}
+
+message ProductOrderPaymentMethodInfo {
+  string                    name           = 1;
+  string                    code           = 2;
+  ProductOrderPaymentMethod method         = 3;
+  double                    fee            = 4;
+  double                    additional_fee = 5;
+  string                    display_fee    = 6;
+  string                    icon           = 7;
+  string                    id             = 8;
+}
+
+message ProductCollectionProductCurrencyInfo {
+  string id   = 1;
+  string name = 2;
+  string code = 3;
+  string icon = 4;
+}
+
+//================================= REQUESTS ===================================
+
+message GetMyProductCollectionReq { string id = 1; }
+
+message GetMyProductCollectionByOrderIdReq {
+  string        order_id   = 1;
+  PaginationReq pagination = 2;
+}
+
+message ListMyProductCollectionReq {}
+
+message InternalCheckProductCollectionReq {
+  string product_id = 1;
+  string user_id    = 2;
+}
+
+message InternalCheckProductIsBoughtReq {
+  string product_id = 1;
+  string user_id    = 2;
+}
+
+//================================= RESPONSE ===================================
+
+message GetMyProductCollectionRes { ProductCollectionInfo info = 1; }
+
+message GetMyProductCollectionByOrderIdRes {
+  repeated ProductCollectionInfo info       = 1;
+  PaginationRes                  pagination = 2;
+}
+
+message ListMyProductCollectionsRes { repeated ProductCollectionInfo info = 1; }
+
+message InternalCheckProductCollectionRes {
+  bool  bought         = 1;
+  int64 expired_time   = 2;
+  int64 remaining_time = 3;
+}
+
+message InternalCheckProductIsBoughtRes { bool result = 1; }

@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package media.mobile;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/media/mobile;mobile";
+
+message PaginationReq {
+  uint32 page_number = 1;
+  uint32 page_limit  = 2;
+}
+
+message PaginationRes {
+  uint32 page_current = 1;
+  uint32 page_limit   = 2;
+  uint32 total_page   = 3;
+  int64  total_record = 4;
+}
+
+enum MediaType {
+  INVALID = 0;
+  IMAGE   = 1;
+  VIDEO   = 2;
+  AUDIO   = 3;
+  URL     = 4;
+  PDF     = 5;
+  DOC     = 6;
+  OTHER   = 7;
+}
+
+message I18N {
+  string lang_code = 1;
+  string text      = 2;
+}
+
+enum Boolean {
+  BOOLEAN_INVALID = 0;
+  BOOLEAN_TRUE    = 1;
+  BOOLEAN_FALSE   = 2;
+}

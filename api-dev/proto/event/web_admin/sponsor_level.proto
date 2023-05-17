@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package event.web_admin;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/web_admin;web_admin";
+
+import "event/web_admin/base.proto";
+
+service SponsorLevelService {
+  rpc CreateSponsorLevel(CreateSponsorLevelReq) returns (CreateSponsorLevelRes);
+  rpc UpdateSponsorLevel(UpdateSponsorLevelReq) returns (Empty);
+  rpc DeleteSponsorLevel(DeleteSponsorLevelReq) returns (Empty);
+  rpc GetSponsorLevel(GetSponsorLevelReq) returns (GetSponsorLevelRes);
+  rpc ListSponsorLevel(ListSponsorLevelReq) returns (ListSponsorLevelRes);
+}
+
+//================================= TYPES ===================================
+
+message SponsorLevelBasicInfo {
+  string name = 1;
+  string icon = 2;
+}
+
+message SponsorLevelListInfo {
+  string                id         = 1;
+  SponsorLevelBasicInfo info       = 2;
+  int64                 created_at = 3;
+  int64                 updated_at = 4;
+  string                created_by = 5;
+  string                updated_by = 6;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateSponsorLevelReq { SponsorLevelBasicInfo info = 1; }
+
+message UpdateSponsorLevelReq {
+  string                id   = 1;
+  SponsorLevelBasicInfo info = 2;
+}
+
+message DeleteSponsorLevelReq { string id = 1; }
+
+message ListSponsorLevelReq {
+  string               search_text = 1; // TODO: Vi và Toàn support
+  PaginationReq        pagination  = 2;
+  repeated OrderByItem order_by    = 3;
+}
+
+message GetSponsorLevelReq { string id = 1; }
+
+//================================= RESPONSES ==================================
+
+message CreateSponsorLevelRes { string id = 1; }
+
+message GetSponsorLevelRes {
+  string                id         = 1;
+  SponsorLevelBasicInfo info       = 2;
+  int64                 created_at = 3;
+  int64                 updated_at = 4;
+  string                created_by = 5;
+  string                updated_by = 6;
+}
+
+message ListSponsorLevelRes {
+  repeated SponsorLevelListInfo info       = 1;
+  PaginationRes                 pagination = 2;
+}

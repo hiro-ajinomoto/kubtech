@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package admin.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+import "proto/admin/web_partnership/base.proto";
+
+service AuthService {
+  rpc CreateAdmin(CreateAdminReq) returns (Empty);
+  rpc Login(LoginReq) returns (LoginRes);
+  rpc ChangePassword(ChangePasswordReq) returns (Empty);
+}
+
+//================================= TYPES ===================================
+
+message UserInfo {
+  string id              = 1;
+  string username        = 2;
+  string email           = 3;
+  string password        = 4;
+  string name            = 5;
+  bool   phone_verified  = 6;
+  bool   is_enabled      = 7;
+  bool   email_verified  = 8;
+  int64  created_at      = 9;
+  int64  updated_at      = 10;
+  string phone_number    = 11;
+  string phone_code      = 12;
+  string profile_picture = 13;
+  string description     = 14;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateAdminReq {
+  string email           = 1;
+  string password        = 2;
+  string name            = 3;
+  string phone_number    = 4;
+  string phone_code      = 5;
+  string profile_picture = 6;
+  string description     = 7;
+}
+
+message LoginReq {
+  string username = 1;
+  string password = 2;
+}
+
+message ChangePasswordReq {
+  string old_password = 1;
+  string password     = 2;
+}
+
+//================================= RESPONSES ==================================
+
+message LoginRes {
+  string access_token  = 1;
+  string refresh_token = 2;
+  uint64 expire_time   = 3;
+}

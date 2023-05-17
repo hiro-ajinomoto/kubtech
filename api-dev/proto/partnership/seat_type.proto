@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package partnership;
+option  go_package = "./;partnership";
+
+import "proto/partnership/base.proto";
+
+service SeatTypeService {
+  rpc RetrieveSeatType(RetrieveSeatTypeReq) returns (RetrieveSeatTypeRes);
+  rpc ListSeatType(ListSeatTypeReq) returns (ListSeatTypeRes);
+  rpc CreateSeatType(CreateSeatTypeReq) returns (CreateSeatTypeRes);
+  rpc UpdateSeatType(UpdateSeatTypeReq) returns (Empty);
+  rpc DeleteSeatType(DeleteSeatTypeReq) returns (Empty);
+}
+
+//================================= TYPES ===================================
+
+message SeatTypeBasicInfo { string name = 1; }
+
+message SeatTypeListInfo {
+  string            id         = 1;
+  SeatTypeBasicInfo info       = 2;
+  int64             created_at = 3;
+  int64             updated_at = 4;
+  string            created_by = 5;
+  string            updated_by = 6;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateSeatTypeReq { string name = 1; }
+
+message UpdateSeatTypeReq {
+  string            id   = 1;
+  SeatTypeBasicInfo info = 2;
+}
+
+message DeleteSeatTypeReq { string id = 1; }
+
+message ListSeatTypeReq {
+  string               search_text = 1;
+  PaginationReq        pagination  = 2;
+  repeated OrderByItem order_by    = 3;
+}
+
+message RetrieveSeatTypeReq { string id = 1; }
+
+//================================= RESPONSES ==================================
+
+message CreateSeatTypeRes { string id = 1; }
+
+message RetrieveSeatTypeRes {
+  string            id         = 1;
+  SeatTypeBasicInfo info       = 2;
+  int64             created_at = 3;
+  int64             updated_at = 4;
+  string            created_by = 5;
+  string            updated_by = 6;
+}
+
+message ListSeatTypeRes {
+  repeated SeatTypeListInfo info       = 1;
+  PaginationRes             pagination = 2;
+}

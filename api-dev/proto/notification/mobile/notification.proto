@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package notification.mobile;
+option  go_package = "./mobile;mobile";
+
+import "proto/notification/mobile/base.proto";
+
+service NotificationSvc {
+  rpc PushNotification(PushNotificationReq) returns (Empty);
+  rpc SubscribeTopic(SubscribeTopicReq) returns (Empty);
+  rpc UnsubscribeTopic(UnsubscribeTopicReq) returns (Empty);
+}
+
+enum NotificationStatus {
+  NOTIFICATION_STATUS_INVALID = 0;
+  NOTIFICATION_STATUS_CREATED = 1;
+  NOTIFICATION_STATUS_SENT    = 2;
+}
+enum NotificationType {
+  NOTIFICATION_TYPE_INVALID    = 0;
+  NOTIFICATION_TYPE_PUSH       = 1;
+  NOTIFICATION_TYPE_BACKGROUND = 2;
+}
+
+message Notification {
+  string             id         = 1;
+  NotificationType   type       = 2;
+  string             title      = 3;
+  string             message    = 4;
+  NotificationStatus status     = 5;
+  repeated string    recipients = 6;
+  string             created_at = 7;
+  string             updated_at = 8;
+}
+
+message PushNotificationReq {
+  NotificationType   type       = 2;
+  string             title      = 3;
+  string             message    = 4;
+  NotificationStatus status     = 5;
+  repeated string    recipients = 6;
+}
+
+message SubscribeTopicReq { string topic = 1; }
+
+message UnsubscribeTopicReq {
+  string topic   = 1;
+  string user_id = 2;
+}

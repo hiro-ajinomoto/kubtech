@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package partner.backend;
+option  go_package = "./backend;backend";
+
+import "proto/partner/backend/base.proto";
+
+service PartnerLocationService {
+  rpc RetrievePartnerLocation(RetrievePartnerLocationReq) returns (RetrievePartnerLocationRes);
+}
+
+//========================================= BASIC ==================================
+
+message PartnerLocationContactInfo {
+  string full_name    = 1;
+  string phone_code   = 2;
+  string phone_number = 3;
+}
+
+message PartnerLocationBasicInfo {
+  string                     name         = 1;
+  string                     description  = 2;
+  Coordinates                coordinates  = 3;
+  string                     unit         = 4;
+  string                     number       = 5;
+  string                     street       = 6;
+  string                     ward         = 7;
+  string                     district     = 8;
+  string                     city         = 9;
+  string                     region       = 10;
+  string                     country      = 11;
+  string                     postal_code  = 12;
+  string                     full_address = 13;
+  string                     suburban     = 14;
+  string                     partner_id   = 15;
+  PartnerLocationContactInfo contact_info = 16;
+}
+
+message PartnerLocationListInfo {
+  string                   id         = 1;
+  PartnerLocationBasicInfo info       = 2;
+  int64                    created_at = 3;
+  int64                    updated_at = 4;
+  string                   created_by = 5;
+  string                   updated_by = 6;
+}
+
+//======================================== REQUEST ==================================
+
+message RetrievePartnerLocationReq { string id = 1; }
+
+//======================================== RESPONSE ==================================
+
+message RetrievePartnerLocationRes { PartnerLocationListInfo info = 1; }

@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package customer.mobile;
+option  go_package = "./mobile;mobile";
+
+import "proto/customer/mobile/base.proto";
+
+service AuthPhoneService {
+  rpc SendOtpByPhone(SendOtpByPhoneReq) returns (SendOtpByPhoneRes);
+  rpc VerifyPhoneNumber(VerifyPhoneNumberReq) returns (Empty);
+  rpc VerifyOtpToResetPasswordByPhone(VerifyOtpToResetPasswordByPhoneReq) returns (VerifyOtpToResetPasswordByPhoneRes);
+  rpc ResetPasswordByPhone(ResetPasswordByPhoneReq) returns (Empty);
+
+  rpc SendOtpSecurityByPhone(SendOtpSecurityByPhoneReq) returns (SendOtpSecurityByPhoneRes);
+  rpc VerifyOtpSecurityByPhone(VerifyOtpSecurityByPhoneReq) returns (VerifyOtpSecurityByPhoneRes);
+
+  rpc SendOtpToChangePhoneByPhone(SendOtpToChangePhoneByPhoneReq) returns (SendOtpToChangePhoneByPhoneRes);
+  rpc VerifyOtpToChangePhoneByPhone(VerifyOtpToChangePhoneByPhoneReq) returns (Empty);
+}
+
+//================================= TYPE ===================================
+enum PhoneOtpType {
+  PHONE_OTP_TYPE_INVALID                = 0;
+  PHONE_OTP_CUSTOMER_PHONE_VERIFICATION = 1;
+  PHONE_OTP_CUSTOMER_RESET_PASSWORD     = 2;
+}
+
+enum PhoneOtpSecurityType {
+  PHONE_OTP_SECURITY_TYPE_INVALID             = 0;
+  PHONE_OTP_SECURITY_TYPE_CHANGE_PHONE_NUMBER = 1;
+  PHONE_OTP_SECURITY_TYPE_CHANGE_EMAIL        = 2;
+}
+
+//================================= REQUESTS ===================================
+
+message SendOtpByPhoneReq {
+  string       phone_code     = 1;
+  string       phone_number   = 2;
+  string       partnership_id = 4;
+  PhoneOtpType otp_type       = 5;
+}
+
+message VerifyPhoneNumberReq {
+  string phone_code     = 1;
+  string phone_number   = 2;
+  string otp            = 3;
+  string partnership_id = 4;
+}
+
+message VerifyOtpToResetPasswordByPhoneReq {
+  string phone_code     = 1;
+  string phone_number   = 2;
+  string otp            = 3;
+  string partnership_id = 6;
+}
+
+message ResetPasswordByPhoneReq { string new_password = 1; }
+
+message SendOtpSecurityByPhoneReq { PhoneOtpSecurityType type = 1; }
+
+message VerifyOtpSecurityByPhoneReq {
+  string               otp  = 1;
+  PhoneOtpSecurityType type = 2;
+}
+
+message SendOtpToChangePhoneByPhoneReq {
+  string token        = 1;
+  string phone_code   = 2;
+  string phone_number = 3;
+}
+
+message VerifyOtpToChangePhoneByPhoneReq {
+  string token        = 1;
+  string phone_code   = 2;
+  string phone_number = 3;
+  string otp          = 4;
+}
+
+//================================= RESPONSES ==================================
+
+message SendOtpByPhoneRes { uint32 time_remaining = 1; }
+
+message SendOtpSecurityByPhoneRes { uint32 time_remaining = 1; }
+
+message VerifyOtpToResetPasswordByPhoneRes {
+  string access_token = 1;
+  uint64 expire_time  = 2;
+}
+
+message VerifyOtpSecurityByPhoneRes {
+  string token       = 1;
+  uint64 expire_time = 2;
+}
+
+message SendOtpToChangePhoneByPhoneRes { uint32 time_remaining = 1; }

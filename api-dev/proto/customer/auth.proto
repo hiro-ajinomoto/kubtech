@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package customer;
+option  go_package = "./;customer";
+
+import "proto/customer/base.proto";
+
+service AuthService {
+  // Authentication
+  rpc Login(LoginReq) returns (LoginRes);
+  rpc Logout(Empty) returns (Empty);
+
+  rpc LoginByQRCode(LoginByQRCodeReq) returns (LoginByQRCodeRes);
+}
+
+enum AuthenticationType {
+  AUTHENTICATION_TYPE_INVALID = 0;
+  AUTHENTICATION_TYPE_PHONE   = 1;
+  AUTHENTICATION_TYPE_EMAIL   = 2;
+}
+
+message LoginReq {
+  AuthenticationType type           = 1;
+  string             email          = 2;
+  string             phone_number   = 3;
+  string             phone_code     = 4;
+  string             password       = 5;
+  string             partnership_id = 6;
+}
+
+message LoginByQRCodeReq {
+  string qr_code        = 1;
+  string partnership_id = 2;
+}
+
+message LoginRes {
+  string access_token  = 1;
+  string refresh_token = 2;
+  uint64 expire_time   = 3;
+}
+
+
+message LoginByQRCodeRes {
+  string access_token  = 1;
+  string refresh_token = 2;
+  uint64 expire_time   = 3;
+}

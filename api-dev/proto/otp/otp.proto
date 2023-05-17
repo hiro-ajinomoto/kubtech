@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package otp;
+option  go_package = "./;otp";
+
+import "proto/otp/base.proto";
+
+service OTPService {
+  rpc SendPhoneOTP(SendPhoneOTPReq) returns (SendPhoneOTPRes);
+  rpc SendEmailOTP(SendEmailOTPReq) returns (SendEmailOTPRes);
+
+  rpc VerifyPhoneOTP(VerifyPhoneOTPReq) returns (Empty);
+  rpc VerifyEmailOTP(VerifyEmailOTPReq) returns (Empty);
+}
+
+//================================= TYPES ===================================
+
+enum OTPType {
+  OTP_TYPE_INVALID                     = 0;
+  OTP_TYPE_CUSTOMER_EMAIL_VERIFICATION = 1;
+  OTP_TYPE_CUSTOMER_PHONE_VERIFICATION = 2;
+  OTP_TYPE_CUSTOMER_RESET_PASSWORD     = 3;
+  OTP_TYPE_CUSTOMER_TRANSFER_TICKET    = 4;
+}
+
+//================================= REQUESTS ===================================
+
+message SendPhoneOTPReq {
+  string  phone_code      = 1;
+  string  phone_number    = 2;
+  string  recaptcha_token = 3;
+  string  partnership_id  = 4;
+  OTPType otp_type        = 5;
+}
+
+message SendEmailOTPReq {
+  string  email          = 1;
+  string  partnership_id = 2;
+  OTPType type           = 3;
+}
+
+message VerifyPhoneOTPReq {
+  string phone_code     = 1;
+  string phone_number   = 2;
+  string otp            = 3;
+  string partnership_id = 4;
+  string firebase_sid   = 5;
+}
+
+message VerifyEmailOTPReq {
+  string email          = 1;
+  string partnership_id = 2;
+  string otp            = 3;
+}
+
+//================================= RESPONSES ==================================
+
+message SendPhoneOTPRes {
+  uint32 time_remaining = 1;
+  string firebase_sid   = 2;
+}
+
+message SendEmailOTPRes { uint32 time_remaining = 1; }

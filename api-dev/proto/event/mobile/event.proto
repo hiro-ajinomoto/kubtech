@@ -1,0 +1,153 @@
+syntax = "proto3";
+
+package event.mobile;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/mobile;mobile";
+
+import "base/base.proto";
+import "event/mobile/event_location.proto";
+import "event/mobile/artist.proto";
+import "event/mobile/sponsor.proto";
+
+service EventService {  
+  rpc PublicRetrieveEvent(PublicRetrieveEventReq) returns (PublicRetrieveEventRes);
+  rpc PublicListEvents(PublicListEventsReq) returns (PublicListEventsRes);  
+  rpc ListEventSchedules(ListEventScheduleReq) returns (ListEventScheduleRes);
+}
+
+//================================= BASIC ===================================
+
+enum EventType {
+  EVENT_TYPE_INVALID = 0;
+  EVENT_TYPE_OFFLINE = 1;
+  EVENT_TYPE_ONLINE  = 2;
+}
+
+enum SearchEventStatus {
+  EVENT_FILTER_STATUS_NONE              = 0;
+  EVENT_FILTER_STATUS_SALE_COMING_SOON  = 1;
+  EVENT_FILTER_STATUS_ON_SALE           = 2;
+  EVENT_FILTER_STATUS_STOP_SALE         = 3;
+  EVENT_FILTER_STATUS_SOLD_OUT          = 4;
+  EVENT_FILTER_STATUS_UPCOMING          = 5;
+  EVENT_FILTER_STATUS_GOING_ON          = 6;
+  EVENT_FILTER_STATUS_ENDED             = 7;
+  EVENT_FILTER_STATUS_HOT               = 8;
+  EVENT_FILTER_STATUS_PUBLISHED         = 9;
+  EVENT_FILTER_STATUS_UNPUBLISHED       = 10;
+}
+
+enum EventStatus {
+  EVENT_DISPLAY_STATUS_NONE              = 0;
+  EVENT_DISPLAY_STATUS_SALE_COMING_SOON  = 1;
+  EVENT_DISPLAY_STATUS_ON_SALE           = 2;
+  EVENT_DISPLAY_STATUS_STOP_SALE         = 3;
+  EVENT_DISPLAY_STATUS_SOLD_OUT          = 4;
+  EVENT_DISPLAY_STATUS_UPCOMING         = 5;
+  EVENT_DISPLAY_STATUS_GOING_ON          = 6;
+  EVENT_DISPLAY_STATUS_ENDED             = 7;
+}
+
+message Event {
+  string                        id                  = 1;
+  string                        name                = 2;
+  string                        code                = 3;
+  int64                         duration            = 4;
+  string                        price_description   = 5;
+  string                        description         = 6;
+  int64                         booking_start_time  = 7;
+  int64                         booking_end_time    = 8;
+  string                        timezone            = 9;
+  repeated string               hashtags            = 10;
+  repeated string               event_image_urls    = 11;
+  repeated string               program_image_urls = 12;  
+  bool                          is_hot              = 14;
+  bool                          is_public           = 15;
+  repeated ArtistInfo           artists             = 16;
+  repeated EventSponsor         sponsors            = 17;
+  repeated EventScheduleInfo    schedules           = 18;
+  int64                         created_at          = 20;
+  int64                         updated_at          = 21;  
+  EventLocationInfo             location            = 24;
+  EventStats                    stats               = 25;
+}
+
+message EventListInfo {
+  string          id                 = 1;
+  string          name               = 2;
+  string          code               = 3;
+  int64           duration           = 4;
+  string          price_description  = 5;
+  string          description        = 6;  
+  repeated string hashtags           = 7;
+  repeated string event_image_urls   = 8;
+  bool            is_hot             = 9;
+  bool            is_public          = 10;
+  EventStats      stats              = 11;
+}
+
+message EventStats {
+  int64       start_time           = 1;
+  int64       end_time             = 2;
+  EventStatus status               = 3;
+  bool        is_sold_out          = 4;
+  int32       number_of_seat       = 5;  
+}
+
+message EventSponsor {
+  string      rank    = 1;
+  SponsorInfo sponsor = 2;
+}
+
+message EventSeatMap {
+  string id          = 1;
+  string name        = 2;
+  string map_picture = 3;
+  string description = 4;
+}
+
+message EventScheduleBasicInfo {
+  string          event_id            = 1;
+  string          name                = 2;
+  int64           start_time          = 3;
+  int64           end_time            = 4; // placeholder
+  int64           check_in_start_time = 5;
+  int64           check_in_end_time   = 6;
+  bool            is_public           = 7;
+  EventType       event_type          = 8;
+  repeated string seat_maps_ids       = 9;
+}
+
+message EventScheduleInfo {
+  string                id                  = 1;
+  string                name                = 3;
+  int64                 start_time          = 4;
+  int64                 end_time            = 5;
+  int64                 check_in_start_time = 6;
+  int64                 check_in_end_time   = 7;
+  bool                  is_public           = 8;
+  bool                  is_sold_out         = 10;
+  repeated string       seat_maps_ids       = 11;
+}
+//================================= REQUESTS ===================================
+
+message PublicRetrieveEventReq { string id = 1; }
+
+message PublicListEventsReq {
+  string             search_text     = 1;
+  SearchEventStatus  status          = 2;  
+  base.PaginationReq pagination      = 3;
+  repeated base.OrderByItem order_by = 4;
+}
+
+message ListEventScheduleReq { string event_id = 1; }
+
+//================================= RESPONSES ==================================
+
+message PublicRetrieveEventRes { Event info = 1; }
+
+message PublicListEventsRes {
+  repeated EventListInfo items      = 1;
+  base.PaginationRes     pagination = 2;
+}
+
+message ListEventScheduleRes { repeated EventScheduleInfo items = 1; }

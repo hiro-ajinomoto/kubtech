@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package event.mobile;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/mobile;mobile";
+
+import "base/base.proto";
+import "event/mobile/base.proto";
+
+service ArtistService {
+  rpc GetArtistDetail(GetArtistDetailReq) returns (GetArtistDetailRes);
+  rpc ListArtist(ListArtistReq) returns (ListArtistRes);  
+}
+
+//================================= TYPES ===================================
+message ArtistInfo {
+  string          id           = 1;
+  string          name         = 2;
+  string          avatar       = 3;
+  repeated string roles        = 4; 
+  repeated Url    contact_urls = 5;
+  string          intro        = 6;
+}
+
+message ArtistListInfo {
+  string          id           = 1;
+  string          name         = 2;
+  string          avatar       = 3;
+  repeated string roles        = 4;
+  int64           created_at   = 5;
+  int64           updated_at   = 6;
+  string          created_by   = 7;
+  string          updated_by   = 8;
+  string          intro        = 9;
+  string          cover        = 10;
+  repeated Url    contact_urls = 11;
+}
+
+//================================= REQUESTS ===================================
+
+message ListArtistReq {
+  string             search_text     = 1;
+  base.PaginationReq pagination      = 2;
+  repeated base.OrderByItem order_by = 3;
+}
+
+message GetArtistDetailReq { string id = 1; }
+
+//================================= RESPONSES ==================================
+
+message GetArtistDetailRes { ArtistInfo info = 1; }
+
+message ListArtistRes {
+  repeated ArtistListInfo items      = 1;
+  base.PaginationRes      pagination = 2;
+}

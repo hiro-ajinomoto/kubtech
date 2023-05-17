@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package partner.backend;
+option  go_package = "./backend;backend";
+
+service PartnershipTradingService {
+  rpc CreatePartnershipTrading(CreatePartnershipTradingReq) returns (CreatePartnershipTradingRes);
+}
+
+//================================= REQUESTS ===================================
+
+message CreatePartnershipTradingReq {
+  string email           = 1;
+  string password        = 2;
+  string name            = 3;
+  string profile_picture = 4;
+  string phone_code      = 6;
+  string phone_number    = 7;
+  string shop_name       = 8;
+  string shop_logo       = 9;
+  string shop_banner     = 10;
+}
+
+//================================= RESPONSES ==================================
+message CreatePartnershipTradingRes {
+  string shop_id       = 1;
+  string shop_owner_id = 2;
+}

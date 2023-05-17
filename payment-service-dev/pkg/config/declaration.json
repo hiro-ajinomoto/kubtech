@@ -1,0 +1,20 @@
+{
+  "exchanges": [
+    "payment_exchange"
+  ],
+  "queues": [
+    {
+      "name": "payment_queue",
+      "topics": [
+        {
+          "name": "payment.refund",
+          "exchange": "payment_exchange"
+        },
+        {
+          "name": "payment.pending",
+          "exchange": "payment_exchange"
+        }
+      ]
+    }
+  ]
+}

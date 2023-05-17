@@ -1,0 +1,174 @@
+syntax = "proto3";
+
+package ticket.mobile;
+option  go_package = "./mobile;mobile";
+
+import "ticket/mobile/base.proto";
+
+service TicketTransferableService {
+  // create ticket transferable
+  // check if ticket in ticket transferable => raise error
+  rpc CreateTicketTransferable(CreateTicketTransferableReq) returns (CreateTicketTransferableRes);
+
+  // create ticket transferable for all tickets in price block (filter by seat_name_from and seat_name_to)
+  rpc CreateTicketTransferableAll(CreateTicketTransferableAllReq) returns (CreateTicketTransferableAllRes);
+
+  // create ticket transferable for all tickets in price block exclude some tickets (filter by seat_name_from and
+  // seat_name_to)
+  rpc CreateTicketTransferableAllExclude(CreateTicketTransferableAllExcludeReq)
+      returns (CreateTicketTransferableAllExcludeRes);
+
+  // map user info to ticket transferable
+  rpc MapUserInfo(MapUserInfoReq) returns (Empty);
+
+  // submit ticket transferable (one transaction)
+  // 1. create order with type transferable, price = 0 && create new tickets for new owner with new order id
+  // 2. move old tickets to transferred_tickets (set secret_code, verification_code to empty)
+  // 3. remove ticket transferable
+  rpc SubmitTicketTransferable(SubmitTicketTransferableReq) returns (Empty);
+
+  rpc GetDetailTicketTransferable(GetDetailTicketTransferableReq) returns (GetDetailTicketTransferableRes);
+}
+
+//================================= TYPES ===================================
+
+message TicketTransferableInfo {
+  string                                id             = 1;
+  int64                                 created_at     = 2;
+  int64                                 updated_at     = 3;
+  string                                created_by     = 4;
+  string                                updated_by     = 5;
+  repeated TicketTransferableTicketInfo tickets        = 6;
+  TicketTransferableUserInfo            user_info      = 7;
+  string                                partnership_id = 8;
+  TicketTransferableEventInfo           event_info     = 9;
+  string                                order_id       = 10;
+}
+message TicketTransferableTicketInfo {
+  string                     id        = 1;
+  TicketTransferableSeatInfo seat_info = 2;
+}
+
+message TicketTransferablePriceSimpleInfo {
+  string                         id       = 1;
+  string                         name     = 2;
+  string                         icon     = 3;
+  double                         price    = 4;
+  TicketTransferableCurrencyInfo currency = 5;
+}
+
+message TicketTransferableCurrencyInfo {
+  string name = 1;
+  string code = 2;
+  string icon = 3;
+}
+
+message TicketTransferableUserInfo {
+  string user_id         = 1;
+  string user_full_name  = 2;
+  string user_phone      = 3; // what if a child?
+  string user_email      = 4;
+  string user_address    = 5;
+  string user_image      = 6; // required at inspector
+  string user_phone_code = 7;
+}
+
+message TicketTransferableSeatInfo {
+  string                            id                    = 1;
+  string                            name                  = 2;
+  TicketTransferablePriceSimpleInfo price                 = 3;
+  string                            price_block_id        = 4;
+  string                            price_block_name      = 5;
+  string                            general_seat_map_id   = 6;
+  string                            general_seat_map_name = 7;
+  string                            seat_type_name        = 8;
+}
+
+message TicketTransferableEventInfo {
+  string                          event_id = 1;
+  TicketTransferableEventSchedule schedule = 2;
+}
+
+message TicketTransferableEventLocation {
+  string id       = 1;
+  string address  = 2;
+  string ward     = 3;
+  string district = 4;
+  string city     = 5;
+  string country  = 6;
+}
+
+message TicketTransferableEventVoucherInfo {
+  string id         = 1;
+  string name       = 2;
+  string thumbnail  = 3;
+  string sponsor_id = 4;
+  int64  expired_at = 5;
+  string event_id   = 6;
+  string detail     = 7;
+}
+
+message TicketTransferableEventSchedule {
+  TicketTransferableEventLocation             location = 1;
+  repeated TicketTransferableEventVoucherInfo vouchers = 2;
+  TicketTransferableEventTime                 time     = 3;
+}
+
+message TicketTransferableEventTime {
+  int64  start_time         = 1;
+  int64  end_time           = 2;
+  int64  booking_start_time = 3;
+  int64  booking_end_time   = 4;
+  int64  checkin_start_time = 5;
+  int64  checkin_end_time   = 6;
+  string timezone           = 7;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateTicketTransferableReq {
+  string                      transferable_id = 1;
+  repeated string             ticket_ids      = 2;
+  TicketTransferableEventInfo event_info      = 3;
+  string                      order_id        = 4;
+}
+
+message CreateTicketTransferableAllReq {
+  string                      transferable_id = 1;
+  string                      seat_map_id     = 2;
+  string                      price_block_id  = 3;
+  string                      seat_name_from  = 4;
+  string                      seat_name_to    = 5;
+  TicketTransferableEventInfo event_info      = 6;
+  string                      order_id        = 7;
+}
+
+message CreateTicketTransferableAllExcludeReq {
+  string                      transferable_id    = 1;
+  string                      seat_map_id        = 2;
+  string                      price_block_id     = 3;
+  string                      seat_name_from     = 4;
+  string                      seat_name_to       = 5;
+  repeated string             exclude_ticket_ids = 6;
+  TicketTransferableEventInfo event_info         = 7;
+  string                      order_id           = 8;
+}
+
+message MapUserInfoReq {
+  string                     transferable_id = 1;
+  TicketTransferableUserInfo user_info       = 2;
+}
+
+message SubmitTicketTransferableReq { string transferable_id = 1; }
+
+message GetDetailTicketTransferableReq { string transferable_id = 1; }
+
+//================================= RESPONSE ===================================
+
+message CreateTicketTransferableRes { string transferable_id = 1; }
+
+message CreateTicketTransferableAllRes { string transferable_id = 1; }
+
+message CreateTicketTransferableAllExcludeRes { string transferable_id = 1; }
+
+message GetDetailTicketTransferableRes { TicketTransferableInfo transferable_info = 1; }

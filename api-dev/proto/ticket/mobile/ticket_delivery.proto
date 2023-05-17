@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package ticket.mobile;
+option  go_package = "./mobile;mobile";
+
+// import "ticket/mobile/base.proto";
+import "base/base.proto";
+import "ticket/mobile/ticket.proto";
+
+service TicketDeliveryService { rpc ListTicketDeliveries(ListTicketDeliveriesReq) returns (ListTicketDeliveriesRes); }
+
+//=================================== TYPES ====================================
+enum TicketDeliveryStatus {
+  TICKET_DELIVERY_STATUS_INVALID    = 0;
+  TICKET_DELIVERY_STATUS_NOT_USED   = 1;
+  TICKET_DELIVERY_STATUS_CHECKED_IN = 2;
+}
+
+message TicketDeliveryEventInfo {
+  string          event_id           = 1;
+  string          address            = 2;
+  string          name               = 3;
+  int64           start_time         = 4;
+  int64           end_time           = 5;
+  int64           checkin_start_time = 6;
+  int64           checkin_end_time   = 7;
+  string          timezone           = 8;
+  repeated string seat_block_names   = 9;
+  repeated string seat_names         = 10;
+}
+
+message TicketDeliveryInfo {
+  string                  id                     = 1;
+  int64                   created_at             = 2;
+  int64                   updated_at             = 3;
+  string                  partnership_id         = 4;
+  string                  secret_code            = 5;
+  repeated TicketInfo     tickets                = 6;
+  string                  user_id                = 7;
+  string                  order_code             = 8;
+  TicketDeliveryStatus    status                 = 9;
+  int64                   ticket_check_in_amount = 10;
+  TicketDeliveryEventInfo event_info             = 11;
+}
+
+//================================= REQUESTS ===================================
+message ListTicketDeliveriesReq {
+  base.PaginationReq pagination   = 1;
+  string             search_event = 2;
+}
+
+//================================= RESPONSE ===================================
+
+message ListTicketDeliveriesRes {
+  repeated TicketDeliveryInfo list       = 1;
+  base.PaginationRes          pagination = 2;
+}

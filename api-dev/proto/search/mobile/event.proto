@@ -1,0 +1,208 @@
+syntax = "proto3";
+
+package search.mobile;
+option  go_package = "./mobile;mobile";
+
+import "proto/search/mobile/base.proto";
+
+service SearchEventService {
+  rpc GetEventDetail(GetEventDetailReq) returns (GetEventDetailRes);
+  rpc SearchTopEvents(SearchTopEventsReq) returns (SearchTopEventsRes);
+  rpc SearchListEvents(SearchListEventsReq) returns (SearchListEventsRes);
+}
+
+//================================= BASIC ===================================
+
+enum SearchEventStatus {
+  EVENT_FILTER_STATUS_INVALID           = 0;
+  EVENT_FILTER_STATUS_HOT               = 1;
+  EVENT_FILTER_STATUS_PUBLISHED         = 2;
+  EVENT_FILTER_STATUS_UNPUBLISHED       = 3;
+  EVENT_FILTER_STATUS_GOING_ON          = 4;
+  EVENT_FILTER_STATUS_UPCOMING          = 5;
+  EVENT_FILTER_STATUS_SOLD_OUT          = 6;
+  EVENT_FILTER_STATUS_ENDED             = 7;
+  EVENT_FILTER_STATUS_ON_SALE           = 8;  // đang mở bán
+  EVENT_FILTER_STATUS_SALE_COMMING_SOON = 9;  // sắp mở bán
+  EVENT_FILTER_STATUS_STOP_SALE         = 10; // hết bán
+}
+
+enum EventDetailPageDisplayStatus {
+  EVENT_DETAIL_DISPLAY_STATUS_INVALID           = 0;
+  EVENT_DETAIL_DISPLAY_STATUS_BOOKING_GOING_ON  = 1; // sắp mở bán (ignore các status khác)
+  EVENT_DETAIL_DISPLAY_STATUS_BOOKING_AVAILABLE = 2; // đang mở bán except hot
+  EVENT_FILTER_DISPLAY_STATUS_HOT               = 3; // đang mở bán + hot = hot
+  EVENT_FILTER_DISPLAY_STATUS_GOING_ON          = 4; // đã ngừng bán + sắp diễn ra -> sắp diễn ra
+  EVENT_FILTER_DISPLAY_STATUS_LIVE              = 5; // đã ngừng bán + đang diễn ra -> đang diễn ra
+  EVENT_FILTER_DISPLAY_STATUS_SOLD_OUT          = 6; // hết vé (except kết thúc)
+  EVENT_FILTER_DISPLAY_STATUS_ENDED             = 7; // kết thúc (ignore các status khác)
+}
+
+message EventDetailInfo {
+  string                       event_id          = 1;
+  string                       name              = 2;
+  EventDetailPageDisplayStatus status            = 3;
+  repeated Media               medias            = 4;
+  repeated Media               programs          = 5;
+  repeated EventArtistInfo     artists           = 6;
+  string                       description       = 7;
+  repeated EventScheduleInfo   schedules         = 8;
+  int64                        duration          = 9;
+  int64                        number_of_tickets = 10;
+  double                       min_ticket_price  = 11;
+  double                       max_ticket_price  = 12;
+  EventCurrencyInfo            currency          = 13;
+  repeated string              hash_tags         = 14;
+  int64                        created_at        = 15;
+  int64                        updated_at        = 16;
+  string                       created_by        = 17;
+  string                       updated_by        = 18;
+}
+
+message EventCurrencyInfo {
+  string id   = 1;
+  string name = 2;
+  string code = 3;
+  string icon = 4;
+}
+
+message EventSimpleInfo {
+  string            es_id               = 1;
+  string            event_id            = 2;
+  string            partnership_id      = 3;
+  string            name                = 4;
+  repeated Media    medias              = 5;
+  string            hightlight_date_str = 6;
+  string            hightlight_address  = 7;
+  EventCurrencyInfo currency            = 8;
+  string            prefix_secret_code  = 9;
+  int64             number_of_tickets   = 10;
+}
+
+message EventListInfo {
+  string                     es_id                  = 1;
+  string                     event_id               = 2;
+  string                     partnership_id         = 3;
+  string                     name                   = 4;
+  repeated Media             medias                 = 5;
+  int64                      min_date_start         = 6;
+  int64                      max_date_end           = 7;
+  int64                      min_booking_date_start = 8;
+  int64                      max_booking_date_end   = 9;
+  bool                       is_hot                 = 10;
+  string                     hightlight_date_str    = 11;
+  string                     hightlight_address     = 12;
+  bool                       is_sold_out            = 13;
+  bool                       is_public              = 14;
+  double                     min_ticket_price       = 15;
+  EventCurrencyInfo          currency               = 16;
+  bool                       is_booking_available   = 17;
+  repeated EventScheduleInfo schedules              = 18;
+  repeated string            hash_tags              = 19;
+}
+
+message EventArtistInfo {
+  string                       id     = 1;
+  string                       name   = 2;
+  string                       avatar = 3;
+  repeated EventArtistTypeInfo type   = 4;
+  string                       intro  = 5;
+}
+
+message EventArtistTypeInfo {
+  string id   = 1;
+  string name = 2;
+  string icon = 3;
+}
+
+message EventScheduleInfo {
+  EventLocationInfo         location    = 1;
+  repeated EventTime        times       = 2;
+  repeated EventSponsors    sponsors    = 3;
+  repeated EventVoucherInfo vouchers    = 4;
+  bool                      is_sold_out = 5;
+  bool                      is_public   = 6;
+}
+
+message EventSeatMaps {
+  string id          = 1;
+  string name        = 2;
+  string map_picture = 3;
+}
+
+message EventTime {
+  repeated EventSeatMaps general_seat_maps  = 1;
+  int64                  start_time         = 2;
+  int64                  end_time           = 3;
+  int64                  booking_start_time = 4;
+  int64                  booking_end_time   = 5;
+  int64                  checkin_start_time = 6;
+  int64                  checkin_end_time   = 7;
+  string                 timezone           = 8;
+  bool                   is_soldout         = 9;
+}
+
+message EventSponsors {
+  string                id     = 1;
+  string                name   = 2;
+  string                avatar = 3;
+  EventSponsorLevelInfo level  = 4;
+}
+
+message EventSponsorLevelInfo {
+  string id   = 1;
+  string name = 2;
+  string icon = 3;
+}
+
+message EventVoucherInfo {
+  string name       = 1;
+  string thumbnail  = 2;
+  string sponsor_id = 3;
+  int64  expired_at = 4;
+  string event_id   = 5;
+  string detail     = 6;
+}
+
+message EventLocationInfo {
+  string id       = 1;
+  string address  = 2;
+  string ward     = 3;
+  string district = 4;
+  string city     = 5;
+  string country  = 6;
+  string name     = 7;
+}
+
+//================================= REQUESTS ===================================
+
+message GetEventDetailReq {
+  string id             = 1;
+  string partnership_id = 2;
+}
+
+message SearchTopEventsReq {
+  string        partnership_id = 1;
+  PaginationReq pagination     = 2;
+}
+
+message SearchListEventsReq {
+  string               partnership_id = 1;
+  SearchEventStatus    status         = 2;
+  PaginationReq        pagination     = 3;
+  repeated OrderByItem order_by       = 4;
+}
+
+//================================= RESPONSES ==================================
+
+message GetEventDetailRes { EventDetailInfo info = 1; }
+
+message SearchTopEventsRes {
+  repeated EventListInfo info       = 1;
+  PaginationRes          pagination = 2;
+}
+
+message SearchListEventsRes {
+  repeated EventListInfo info       = 1;
+  PaginationRes          pagination = 2;
+}

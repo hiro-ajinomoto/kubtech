@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package ticket.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+import "ticket/web_partnership/base.proto";
+
+service PaperTicketService { rpc GenPaperTicketInfo(GenPaperTicketInfoReq) returns (Empty); }
+
+//================================= REQUESTS ===================================
+
+message GenPaperTicketInfoReq { uint32 total_ticket = 1; }

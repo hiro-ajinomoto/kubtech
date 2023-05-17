@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package product.backend;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/product/backend;backend";
+
+service ProductDeliveryService { rpc CheckProductDelivery(CheckProductDeliveryReq) returns (CheckProductDeliveryRes); }
+
+message CheckProductDeliveryReq {
+  string product_id = 1;
+  string user_id    = 2;
+}
+
+message CheckProductDeliveryRes {
+  bool  bought         = 1;
+  int64 expired_time   = 2;
+  int64 remaining_time = 3;
+}

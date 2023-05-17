@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package event.backend;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/backend;backend";
+import "event/backend/base.proto";
+
+service SponsorService {
+
+  rpc GetSponsorDetail(GetSponsorDetailReq) returns (GetSponsorDetailRes);
+  rpc ListSponsorByIds(ListSponsorByIdsReq) returns (ListSponsorByIdsRes);
+}
+
+//================================= TYPES ===================================
+
+message SponsorBasicInfo {
+  string       name         = 1;
+  string       cover        = 2;
+  string       avatar       = 3;
+  string       intro        = 4;
+  repeated Url contact_urls = 5;
+}
+
+message SponsorInfo {
+  string       id           = 1;
+  string       name         = 2;
+  string       cover        = 3;
+  string       avatar       = 4;
+  string       intro        = 5;
+  repeated Url contact_urls = 6;
+  int64        created_at   = 7;
+  int64        updated_at   = 8;
+  string       created_by   = 9;
+  string       updated_by   = 10;
+}
+
+message SponsorLevel {
+  string name = 1;
+  string icon = 2;
+}
+
+//================================= REQUESTS ===================================
+
+message GetSponsorDetailReq { string id = 1; }
+
+message ListSponsorByIdsReq { repeated string ids = 1; }
+
+//================================= RESPONSES ==================================
+
+message GetSponsorDetailRes {
+  string           id         = 1;
+  SponsorBasicInfo info       = 2;
+  int64            created_at = 3;
+  int64            updated_at = 4;
+  string           created_by = 5;
+  string           updated_by = 6;
+}
+
+message ListSponsorByIdsRes { repeated SponsorInfo items = 1; }

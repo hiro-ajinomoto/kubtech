@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package order.mobile;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/order/mobile;mobile";
+
+//================================= TYPES ===================================
+
+message PaginationReq {
+  uint32 page_number = 1;
+  uint32 page_limit  = 2;
+}
+
+message PaginationRes {
+  uint32 page_current = 1;
+  uint32 page_limit   = 2;
+  uint32 total_page   = 3;
+  int64  total_record = 4;
+}
+
+message Empty {}
+
+message DefaultRes { bool result = 1; }
+
+message Location {
+  double lat  = 1;
+  double long = 2;
+}
+
+enum MediaType {
+  INVALID = 0;
+  IMAGE   = 1;
+  VIDEO   = 2;
+  AUDIO   = 3;
+  URL     = 4;
+  PDF     = 5;
+  DOC     = 6;
+  OTHER   = 7;
+}
+
+message Media {
+  string    name       = 1;
+  MediaType media_type = 2;
+  string    source_url = 3;
+  bool      is_cover   = 4;
+}
+
+enum CustomBoolean {
+  CUSTOM_BOOLEAN_INVALID = 0;
+  CUSTOM_BOOLEAN_TRUE    = 1;
+  CUSTOM_BOOLEAN_FALSE   = 2;
+}
+
+enum ProductStatus {
+  PRODUCT_STATUS_INVALID     = 0;
+  PRODUCT_STATUS_PUBLISHED   = 1;
+  PRODUCT_STATUS_UNPUBLISHED = 2;
+  PRODUCT_STATUS_DRAFT       = 3;
+  PRODUCT_STATUS_DELETED     = 4;
+}

@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package partnership;
+option  go_package = "./;partnership";
+
+import "proto/partnership/base.proto";
+
+service SeatPriceService {
+  rpc RetrieveSeatPrice(RetrieveSeatPriceReq) returns (RetrieveSeatPriceRes);
+  rpc ListSeatPrice(ListSeatPriceReq) returns (ListSeatPriceRes);
+  rpc CreateSeatPrice(CreateSeatPriceReq) returns (CreateSeatPriceRes);
+  rpc UpdateSeatPrice(UpdateSeatPriceReq) returns (Empty);
+  rpc DeleteSeatPrice(DeleteSeatPriceReq) returns (Empty);
+}
+
+//================================= TYPES ===================================
+
+message CurrencySimpleInfo {
+  string id   = 1;
+  string name = 2;
+  string code = 3;
+  string icon = 4;
+}
+
+message SeatPriceBasicInfo {
+  string             name     = 1;
+  string             icon     = 2;
+  double             price    = 3;
+  CurrencySimpleInfo currency = 4;
+}
+
+message SeatPriceListInfo {
+  string             id         = 1;
+  SeatPriceBasicInfo info       = 2;
+  int64              created_at = 3;
+  int64              updated_at = 4;
+  string             created_by = 5;
+  string             updated_by = 6;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateSeatPriceReq { SeatPriceBasicInfo info = 1; }
+
+message UpdateSeatPriceReq {
+  string             id   = 1;
+  SeatPriceBasicInfo info = 2;
+}
+
+message DeleteSeatPriceReq { string id = 1; }
+
+message ListSeatPriceReq {
+  string               search_text = 1;
+  PaginationReq        pagination  = 2;
+  repeated OrderByItem order_by    = 3;
+}
+
+message RetrieveSeatPriceReq { string id = 1; }
+
+//================================= RESPONSES ==================================
+
+message CreateSeatPriceRes { string id = 1; }
+
+message RetrieveSeatPriceRes {
+  string             id         = 1;
+  SeatPriceBasicInfo info       = 2;
+  int64              created_at = 3;
+  int64              updated_at = 4;
+  string             created_by = 5;
+  string             updated_by = 6;
+}
+
+message ListSeatPriceRes {
+  repeated SeatPriceListInfo info       = 1;
+  PaginationRes              pagination = 2;
+}

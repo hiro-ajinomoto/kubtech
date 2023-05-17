@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package product.backend;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/product/backend;backend";
+
+service SeatService {
+  rpc CheckIsAbleDeleteSeatsInPriceBlockId(CheckIsAbleDeleteSeatsInPriceBlockIdReq)
+      returns (CheckIsAbleDeleteSeatsInPriceBlockIdRes);
+  rpc GetSeats(GetSeatsReq) returns (GetSeatsRes);
+}
+
+//================================= TYPES ===================================
+
+enum SeatStatus {
+  SEAT_STATUS_INVALID     = 0;
+  SEAT_STATUS_UNAVAILABLE = 1;
+  SEAT_STATUS_AVAILABLE   = 2;
+  SEAT_STATUS_BLOCKED     = 3;
+  SEAT_STATUS_BOOKED      = 4;
+}
+
+enum SeatType {
+  SEAT_TYPE_INVALID = 0;
+  SEAT_TYPE_GENERAL = 1;
+  SEAT_TYPE_SPECIAL = 2;
+  SEAT_TYPE_VIP     = 3;
+  SEAT_TYPE_COUPLE  = 4;
+  SEAT_TYPE_OTHER   = 5;
+}
+
+message SeatInfo {
+  string                id                  = 1;
+  string                user_id             = 2;
+  string                general_seat_map_id = 3;
+  string                seat_price_block_id = 4;
+  SeatPosition          position            = 5;
+  string                name                = 6;
+  SeatType              seat_type           = 7;
+  double                price               = 8;
+  SeatPriceCurrencyInfo currency            = 9;
+  SeatStatus            status              = 10;
+  string                partnership_id      = 11;
+}
+
+message SeatPriceCurrencyInfo {
+  string id   = 1;
+  string name = 2;
+  string code = 3;
+  string icon = 4;
+}
+
+message SeatPosition {
+  int64 x = 1;
+  int64 y = 2;
+}
+
+message SeatSimpleInfo {
+  string id   = 1;
+  string name = 2;
+}
+
+////////////////////////////// REQUEST //////////////////////////////
+
+message CheckIsAbleDeleteSeatsInPriceBlockIdReq { string price_block_id = 1; }
+
+message GetSeatsReq {
+  repeated string seat_ids       = 1;
+  SeatStatus      status         = 2;
+  string          partnership_id = 3;
+}
+
+////////////////////////////// RESPONSE //////////////////////////////
+
+message CheckIsAbleDeleteSeatsInPriceBlockIdRes { bool is_able_delete = 1; }
+
+message GetSeatsRes { repeated SeatInfo seats = 1; }

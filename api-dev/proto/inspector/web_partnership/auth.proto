@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package inspector.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+import "proto/inspector/web_partnership/base.proto";
+
+service AuthService {
+  rpc Login(LoginReq) returns (LoginRes);
+
+  rpc SendOtpToResetPassword(SendOtpToResetPasswordReq) returns (SendOtpToResetPasswordRes);
+  rpc VerifyOtpToResetPassword(VerifyOtpToResetPasswordReq) returns (VerifyOtpToResetPasswordRes);
+  rpc ResetPassword(ResetPasswordReq) returns (Empty);
+}
+
+//================================= REQUESTS ===================================
+
+message LoginReq {
+  string email    = 1;
+  string password = 2;
+}
+
+message SendOtpToResetPasswordReq { string email = 1; }
+
+message VerifyOtpToResetPasswordReq {
+  string email = 1;
+  string otp   = 3;
+}
+
+message ResetPasswordReq { string new_password = 1; }
+
+//================================= RESPONSES ==================================
+
+message LoginRes {
+  string access_token  = 1;
+  string refresh_token = 2;
+  uint64 expire_time   = 3;
+}
+
+message SendOtpToResetPasswordRes { uint32 time_remaining = 1; }
+
+message VerifyOtpToResetPasswordRes {
+  string access_token = 1;
+  uint64 expire_time  = 2;
+}

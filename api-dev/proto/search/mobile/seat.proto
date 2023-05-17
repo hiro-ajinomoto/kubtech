@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package search.mobile;
+option  go_package = "./mobile;mobile";
+
+service SeatService {
+  rpc GetSeats(GetSeatsReq) returns (GetSeatsRes);
+}
+
+enum SeatStatus {
+  SEAT_STATUS_INVALID     = 0;
+  SEAT_STATUS_UNAVAILABLE = 1;
+  SEAT_STATUS_AVAILABLE   = 2;
+  SEAT_STATUS_BLOCKED     = 3;
+  SEAT_STATUS_BOOKED      = 4;
+}
+
+//================================= TYPES ===================================
+
+message SeatBasicInfo {
+  string                          id                  = 1;
+  string                          user_id             = 2;
+  string                          general_seat_map_id = 3;
+  string                          seat_price_block_id = 4;
+  SeatPosition                    position            = 5;
+  string                          name                = 6;
+  SeatTypeBasicInfo               seat_type           = 7;
+  SeatPriceInfo                   price               = 8;
+  repeated SeatAccessoryBasicInfo seat_accessories    = 9;
+  int64                           lock_expired_time   = 10;
+  SeatStatus                      status              = 11; // SEAT_STATUS_BLOCKED if lock_expired_time >= now
+  bool                            is_mine             = 12;
+  string                          partnership_id      = 13;
+}
+
+message SeatPriceInfo {
+  string                id       = 1;
+  string                name     = 2;
+  string                icon     = 3;
+  double                price    = 4;
+  SeatPriceCurrencyInfo currency = 5;
+}
+
+message SeatPriceCurrencyInfo {
+  string id   = 1;
+  string name = 2;
+  string code = 3;
+  string icon = 4;
+}
+
+message SeatAccessoryBasicInfo {
+  string id   = 1;
+  string name = 2;
+}
+
+message SeatTypeBasicInfo {
+  string id   = 1;
+  string name = 2;
+}
+
+message SeatPosition {
+  int64 x = 1;
+  int64 y = 2;
+}
+
+//================================= REQUESTS ===================================
+
+message GetSeatsReq { string seat_price_block_id = 1; }
+
+//================================= RESPONSES ===================================
+
+message GetSeatsRes { repeated SeatBasicInfo infos = 1; }

@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package media.web_partnership;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/media/web_partnership;web_partnership";
+
+import "media/base_media.proto";
+import "media/web_partnership/base.proto";
+import "media/web_partnership/media.proto";
+
+service PlaylistService {
+  rpc CreatePlaylist(CreatePlaylistReq) returns (CreatePlaylistRes);
+  rpc UpdatePlaylist(UpdatePlaylistReq) returns (Empty);
+  rpc DeletePlaylist(DeletePlaylistReq) returns (Empty);
+  rpc RetrievePlaylist(RetrievePlaylistReq) returns (RetrievePlaylistRes);
+  rpc ListPlaylist(ListPlaylistReq) returns (ListPlaylistRes);
+}
+
+//================================= TYPES ===================================
+
+message PlaylistBasicInfo {
+  string          title          = 1;
+  string          intro          = 2;
+  bool            is_public      = 3;
+  bool            is_premium     = 4;
+  repeated string hashtags       = 5;
+  repeated string medias         = 6;
+  string          thumbnail_url  = 7;
+  string          partnership_id = 8;
+  string          slug           = 9;
+}
+
+message PlaylistInfo {
+  string          id             = 1;
+  string          title          = 2;
+  string          intro          = 3;
+  string          thumbnail_url  = 4;
+  bool            is_public      = 5;
+  bool            is_premium     = 6;
+  repeated string hashtags       = 7;
+  int64           created_at     = 8;
+  int64           updated_at     = 9;
+  string          created_by     = 10;
+  string          updated_by     = 11;
+  string          partnership_id = 12;
+  string          slug           = 13;
+}
+
+//================================= REQUESTS ===================================
+
+message CreatePlaylistReq { PlaylistBasicInfo info = 1; }
+
+message UpdatePlaylistReq {
+  string            id   = 1;
+  PlaylistBasicInfo info = 2;
+}
+
+message DeletePlaylistReq { string id = 1; }
+
+message ListPlaylistReq {
+  string               search_text = 1;
+  string               is_public   = 2;
+  string               is_premium  = 3;
+  PaginationReq        pagination  = 4;
+  repeated OrderByItem order_by    = 5;
+}
+
+message RetrievePlaylistReq { string id = 1; }
+
+//================================= RESPONSES ==================================
+
+message CreatePlaylistRes { string id = 1; }
+
+message RetrievePlaylistRes {
+  string             id            = 1;
+  string             title         = 2;
+  string             intro         = 3;
+  string             thumbnail_url = 4;
+  bool               is_public     = 5;
+  bool               is_premium    = 6;
+  repeated string    hashtags      = 7;
+  repeated MediaInfo medias        = 8;
+  int64              created_at    = 9;
+  int64              updated_at    = 10;
+  string             created_by    = 11;
+  string             updated_by    = 12;
+}
+
+message ListPlaylistRes {
+  repeated PlaylistInfo info       = 1;
+  PaginationRes         pagination = 2;
+}

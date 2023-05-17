@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package customer.backend;
+option  go_package = "./backend;backend";
+
+import "proto/customer/backend/base.proto";
+
+service CustomerService {
+  rpc StreamCustomers(StreamCustomersReq) returns (Empty);
+  rpc PushNotificationAllCustomers(PushNotificationAllCustomersReq) returns (Empty);
+  rpc GetUserById(GetUserByIdReq) returns (GetUserByIdRes);
+  rpc GetUser(GetUserReq) returns (GetUserRes);
+}
+
+//================================= TYPES ===================================
+
+enum SocialType {
+  SOCIAL_TYPE_INVALID  = 0;
+  SOCIAL_TYPE_FACEBOOK = 1;
+  SOCIAL_TYPE_GOOGLE   = 2;
+  SOCIAL_TYPE_APPLE    = 3;
+}
+
+enum Gender {
+  GENDER_INVALID = 0;
+  GENDER_MALE    = 1;
+  GENDER_FEMALE  = 2;
+  GENDER_OTHER   = 3;
+}
+
+message UserInfo {
+  string     id                = 1;
+  int64      created_at        = 2;
+  int64      updated_at        = 3;
+  string     email             = 4;
+  string     password          = 5;
+  string     name              = 6;
+  Boolean    phone_verified    = 7;
+  Boolean    email_verified    = 8;
+  string     phone_number      = 9;
+  string     phone_code        = 10;
+  string     profile_picture   = 11;
+  string     description       = 12;
+  string     inviter_id        = 13;
+  int64      birthday          = 14;
+  Gender     gender            = 15;
+  string     partnership_id    = 16;
+  Boolean    is_social_account = 17;
+  SocialType social_type       = 18;
+}
+
+message UserSimpleInfo {
+  string id              = 1;
+  string name            = 2;
+  string profile_picture = 3;
+  string phone_number    = 4;
+  string phone_code      = 5;
+  int64  birthday        = 6;
+  Gender gender          = 7;
+  string partnership_id  = 8;
+}
+
+//================================= REQUESTS ===================================
+
+message StreamCustomersReq {}
+
+message PushNotificationAllCustomersReq { string partnership_id = 1; }
+
+message GetUserByIdReq {
+  string user_id        = 1;
+  string partnership_id = 2;
+}
+
+message GetUserReq {
+  string email          = 1;
+  string phone_code     = 2;
+  string phone_number   = 3;
+  string partnership_id = 4;
+}
+
+//================================= RESPONSES ==================================
+
+message GetUserByIdRes { UserInfo user_info = 1; }
+
+message GetUserRes { UserInfo user_info = 1; }

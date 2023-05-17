@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package partnership;
+option  go_package = "./;partnership";
+
+import "proto/partnership/base.proto";
+
+service MasterDataService {
+  rpc CreateMasterData(CreateMasterDataReq) returns (CreateMasterDataRes);
+  rpc UpdateMasterData(UpdateMasterDataReq) returns (Empty);
+  rpc DeleteMasterData(DeleteMasterDataReq) returns (Empty);
+
+  //  QUERY IN USER APP
+  rpc RetrieveMasterData(RetrieveMasterDataReq) returns (RetrieveMasterDataRes);
+  rpc ListMasterData(ListMasterDataReq) returns (ListMasterDataRes);
+
+  //  QUERY IN PARTNERSHIP APP
+  rpc RetrieveMasterDataPartnership(RetrieveMasterDataPartnershipReq) returns (RetrieveMasterDataPartnershipRes);
+  rpc ListMasterDataPartnership(ListMasterDataPartnershipReq) returns (ListMasterDataPartnershipRes);
+
+  // INTERNAL
+  rpc InternalListMasterDataByIds(InternalListMasterDataByIdsReq) returns (InternalListMasterDataByIdsRes);
+}
+
+//================================= TYPES ===================================
+enum ValueType {
+  VALUE_TYPE_INVALID = 0;
+  VALUE_TYPE_STRING  = 1;
+  VALUE_TYPE_INTEGER = 2;
+  VALUE_TYPE_FLOAT   = 3;
+  VALUE_TYPE_BOOLEAN = 4;
+}
+
+message MasterDataBasicInfo {
+  string              name            = 1;
+  string              value           = 2;
+  string              parent_id       = 3;
+  map<string, string> additional_data = 4;
+  string              type            = 5;
+  ValueType           value_type      = 6;
+}
+
+message MasterDataInfo {
+  string              id         = 1;
+  MasterDataBasicInfo info       = 2;
+  int64               created_at = 3;
+  int64               updated_at = 4;
+  string              created_by = 5;
+  string              updated_by = 6;
+}
+
+message MasterDataBasicFullInfo {
+  repeated I18N       name            = 1;
+  repeated I18N       value           = 2;
+  string              parent_id       = 3;
+  map<string, string> additional_data = 4;
+  string              type            = 5;
+  ValueType           value_type      = 6;
+}
+
+message MasterDataFullInfo {
+  string                  id         = 1;
+  MasterDataBasicFullInfo info       = 2;
+  int64                   created_at = 3;
+  int64                   updated_at = 4;
+  string                  created_by = 5;
+  string                  updated_by = 6;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateMasterDataReq {
+  repeated I18N       name            = 1;
+  repeated I18N       value           = 2;
+  string              parent_id       = 3;
+  map<string, string> additional_data = 4;
+  string              type            = 5;
+  ValueType           value_type      = 6;
+}
+
+message UpdateMasterDataReq {
+  string              id              = 1;
+  repeated I18N       name            = 2;
+  repeated I18N       value           = 3;
+  string              parent_id       = 4;
+  map<string, string> additional_data = 5;
+  string              type            = 6;
+  ValueType           value_type      = 7;
+}
+
+message DeleteMasterDataReq { string id = 1; }
+
+message ListMasterDataReq {
+  string               search_text = 1;
+  PaginationReq        pagination  = 2;
+  repeated OrderByItem order_by    = 3;
+  string               type        = 4;
+  string               parent_id   = 5;
+}
+
+message RetrieveMasterDataReq { string id = 1; }
+
+message ListMasterDataPartnershipReq {
+  string               search_text = 1;
+  PaginationReq        pagination  = 2;
+  repeated OrderByItem order_by    = 3;
+  string               type        = 4;
+  string               parent_id   = 5;
+}
+
+message RetrieveMasterDataPartnershipReq { string id = 1; }
+
+message InternalListMasterDataByIdsReq { repeated string ids = 1; }
+
+//================================= RESPONSES ==================================
+
+message CreateMasterDataRes { string id = 1; }
+
+message RetrieveMasterDataRes { MasterDataInfo info = 1; }
+
+message ListMasterDataRes {
+  repeated MasterDataInfo infos      = 1;
+  PaginationRes           pagination = 2;
+}
+
+message RetrieveMasterDataPartnershipRes { MasterDataFullInfo info = 1; }
+
+message ListMasterDataPartnershipRes {
+  repeated MasterDataFullInfo infos      = 1;
+  PaginationRes               pagination = 2;
+}
+
+message InternalListMasterDataByIdsRes { repeated MasterDataFullInfo infos = 1; }

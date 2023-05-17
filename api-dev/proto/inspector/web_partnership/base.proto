@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+package inspector.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+message Empty {}

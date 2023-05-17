@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package wallet.backend;
+option  go_package = "./backend;backend";
+
+import "proto/wallet/backend/base.proto";
+
+service TransactionService { rpc ExpireTransactions(ExpireTransactionsReq) returns (ExpireTransactionsRes); }
+
+//================================= TYPES ===================================
+
+message Transaction {
+  string            id     = 1;
+  TransactionStatus status = 2;
+  TransactionType   type   = 3;
+  double            amount = 4;
+  double            fee    = 5;
+  int64             time   = 6;
+  string            fund   = 7;
+}
+
+//================================= REQUESTS ===================================
+
+message ExpireTransactionsReq {}
+
+//================================= RESPONSE ===================================
+message ExpireTransactionsRes { repeated Transaction transactions = 1; }

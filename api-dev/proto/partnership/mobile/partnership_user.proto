@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package partnership.mobile;
+option  go_package = "./mobile;mobile";
+
+import "proto/partnership/mobile/base.proto";
+
+service PartnershipUserService {
+  // Fullfilment
+  rpc GetMe(GetMeReq) returns (GetMeRes);
+  rpc UpdateMe(UpdateMeReq) returns (Empty);
+  rpc ChangePassword(ChangePasswordReq) returns (Empty);
+
+  // Reset password
+  rpc SendOtpToResetPassword(SendOtpToResetPasswordReq) returns (SendOtpToResetPasswordRes);
+  rpc VerifyOtpToResetPassword(VerifyOtpToResetPasswordReq) returns (VerifyOtpToResetPasswordRes);
+  rpc ResetPassword(ResetPasswordReq) returns (Empty);
+}
+
+//================================= TYPES ===================================
+
+message UserInfo {
+  string  id              = 1;
+  int64   created_at      = 2;
+  int64   updated_at      = 3;
+  string  email           = 4;
+  string  password        = 5;
+  string  name            = 6;
+  string  profile_picture = 7;
+  string  description     = 8;
+  string  partnership_id  = 9;
+  Boolean is_owner        = 10;
+  string  phone_code      = 11;
+  string  phone_number    = 12;
+}
+
+//================================= REQUESTS ===================================
+
+message UpdateMeReq {
+  string name            = 1;
+  string profile_picture = 2;
+  string description     = 3;
+}
+
+message ChangePasswordReq {
+  string old_password = 1;
+  string password     = 2;
+}
+
+message GetMeReq {}
+
+message SendOtpToResetPasswordReq {
+  string phone_code     = 1;
+  string phone_number   = 2;
+  string partnership_id = 3;
+}
+
+message VerifyOtpToResetPasswordReq {
+  string phone_code     = 1;
+  string phone_number   = 2;
+  string partnership_id = 3;
+  string otp            = 4;
+}
+
+message ResetPasswordReq { string new_password = 1; }
+
+//================================= RESPONSES ==================================
+
+message GetMeRes { UserInfo user_info = 1; }
+
+message SendOtpToResetPasswordRes { uint32 time_remaining = 1; }
+
+message VerifyOtpToResetPasswordRes {
+  string access_token = 1;
+  uint64 expire_time  = 2;
+}

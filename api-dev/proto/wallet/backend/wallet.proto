@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package wallet.backend;
+option  go_package = "./backend;backend";
+
+// import "proto/wallet/backend/base.proto";
+
+service WalletService {
+  rpc CanPay(CanPayReq) returns (CanPayRes);
+  rpc Pay(PayReq) returns (PayRes);
+  rpc GetWalletBalance(GetWalletBalanceReq) returns (GetWalletBalanceRes);
+}
+
+//================================= TYPES ===================================
+
+//================================= REQUESTS ===================================
+
+message CanPayReq {
+  string user_id        = 1;
+  string partnership_id = 2;
+  double amount         = 3;
+  string currency_code  = 4;
+}
+
+message PayReq {
+  string user_id        = 1;
+  string partnership_id = 2;
+  double amount         = 3;
+  string currency_code  = 4;
+  string service_name   = 5;
+  string service_ref_id = 6;
+  string description    = 7;
+}
+message GetWalletBalanceReq {
+  string user_id                  = 1;
+  string partnership_id           = 2;
+  string convert_to_currency_code = 4;
+}
+
+//================================= RESPONSE ===================================
+
+message CanPayRes { bool success = 1; }
+
+message PayRes {
+  bool   success        = 1;
+  string transaction_id = 2;
+}
+
+message GetWalletBalanceRes {
+  double balance       = 1;
+  string currency_code = 2;
+  string currency_name = 3;
+}

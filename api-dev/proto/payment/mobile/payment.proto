@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package payment.mobile;
+option  go_package = "./mobile;mobile";
+
+service PaymentService { rpc GetPaymentMethods(GetPaymentMethodsReq) returns (GetPaymentMethodsRes); }
+
+enum PaymentMethod {
+  PAYMENT_METHOD_INVALID                           = 0;
+  PAYMENT_METHOD_PAYPAL                            = 1;
+  PAYMENT_METHOD_VNPAY_EWALLET                     = 2;  // ví vnpay
+  PAYMENT_METHOD_VNPAY_CREDITCARD                  = 3;  // vnpay với visa, master, JCB
+  PAYMENT_METHOD_VNPAY_BANKTRANSFER                = 4;  // vnpay với các ngân hàng trong nước VN
+  PAYMENT_METHOD_VNPAY_QRCODE                      = 5;  // vnpay quét mã QR
+  PAYMENT_METHOD_MANUAL_BANKTRANSFER               = 6;  // thanh toán ck vào tk theo cú pháp
+  PAYMENT_METHOD_MOMO                              = 7;  // ví momo
+  PAYMENT_METHOD_TWO_CHECKOUT                      = 8;  // two checkout
+  PAYMENT_METHOD_PAYOO_CREDITCARD                  = 9;  // payoo với thẻ quốc tế
+  PAYMENT_METHOD_PAYOO_DOMESTIC_CARD               = 10; // payoo với thẻ nội địa
+  PAYMENT_METHOD_PAYOO_QRCODE                      = 11; // payoo quét mã QR
+  PAYMENT_METHOD_ONE_PAY_CREDITCARD                = 12; // onepay với thẻ quốc tế
+  PAYMENT_METHOD_ONE_PAY_CREDITCARD_DOMESTIC_ISSUE = 13; // onepay với thẻ quốc tế phát hành trong nước
+  PAYMENT_METHOD_ONE_PAY_DOMESTIC_CARD             = 14; // onepay với thẻ nội địa
+  PAYMENT_METHOD_ONE_PAY_QRCODE                    = 15; // onepay quét mã QR
+  PAYMENT_METHOD_APPLE_PAY                         = 16; // Apple IAP
+}
+
+//================================= TYPES ===================================
+
+message PaymentMethodInfo {
+  string        partnership_id = 1;
+  string        name           = 2;
+  string        code           = 3;
+  PaymentMethod method         = 4;
+  double        fee            = 5;
+  double        additional_fee = 6;
+  string        display_fee    = 7;
+  string        icon           = 8;
+  string        id             = 9;
+  string        tag            = 10;
+  bool          is_enable      = 11;
+}
+
+//================================= REQUESTS ===================================
+// cart_id to ask product service whether has digital product to return apple_pay only
+message GetPaymentMethodsReq { string cart_id = 1; }
+
+//================================= RESPONSE ===================================
+
+message GetPaymentMethodsRes { repeated PaymentMethodInfo payment_methods = 1; }

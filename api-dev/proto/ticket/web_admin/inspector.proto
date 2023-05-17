@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package ticket.web_admin;
+option  go_package = "./web_admin;web_admin";
+
+import "ticket/web_admin/base.proto";
+
+service InspectorService { rpc StreamCheckinLogs(StreamCheckinLogsReq) returns (Empty); }
+
+/////////////////////////////////// REQUEST //////////////////////////////////////////
+
+message StreamCheckinLogsReq {}

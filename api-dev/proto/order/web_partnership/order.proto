@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package order.web_partnership;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/order/web_partnership;web_partnership";
+
+import "base/base.proto";
+
+service OrderService { rpc ExportTickets(ExportTicketsReq) returns (base.Empty); }
+
+//================================= TYPES ===================================
+enum UserInfoType {
+  UserInfoTypeNone  = 0;
+  UserInfoTypePhone = 1;
+  UserInfoTypeEmail = 2;
+}
+message Product {
+  string id       = 1;
+  string quantity = 2;
+}
+
+message UserInfo {
+  string                  phone_code   = 1;
+  string                  phone_number = 2;
+  string                  email        = 3;
+  base.AuthenticationType type         = 4;
+}
+
+message ExportTicketsReq {
+  string           event_id    = 1;
+  string           schedule_id = 2;
+  repeated Product items       = 3;
+  UserInfo         user_info   = 4;
+  string           description = 5;
+  bool             is_piublish = 6;
+}

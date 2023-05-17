@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package order.backend;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/order/backend;backend";
+
+//================================= TYPES ===================================
+
+enum MediaType {
+  INVALID = 0;
+  IMAGE   = 1;
+  VIDEO   = 2;
+  AUDIO   = 3;
+  URL     = 4;
+  PDF     = 5;
+  DOC     = 6;
+  OTHER   = 7;
+}
+
+message Media {
+  string    name       = 1;
+  MediaType media_type = 2;
+  string    source_url = 3;
+  bool      is_cover   = 4;
+}
+
+enum Boolean {
+  BOOLEAN_INVALID = 0;
+  BOOLEAN_TRUE    = 1;
+  BOOLEAN_FALSE   = 2;
+}

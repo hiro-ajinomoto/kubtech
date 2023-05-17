@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package ticket.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+import "ticket/web_partnership/base.proto";
+
+service TicketService {
+  rpc PushNotificationUpdateInfo(PushNotificationUpdateInfoReq) returns (Empty);
+  rpc PushNotificationRemindUpdateUserInfo(PushNotificationRemindUpdateUserInfoReq) returns (Empty);
+  rpc PushNotificationRemindCheckinTimeHasCome(PushNotificationRemindCheckinTimeHasComeReq) returns (Empty);
+  rpc PushNotificationSupportOffline(PushNotificationSupportOfflineReq) returns (Empty);
+  rpc PushNotificationThank(PushNotificationThankReq) returns (Empty);
+}
+
+///////////////////////////////////////// REQUEST ////////////////////////////////////////////////
+
+message PushNotificationUpdateInfoReq {}
+message PushNotificationRemindUpdateUserInfoReq {}
+message PushNotificationRemindCheckinTimeHasComeReq {}
+message PushNotificationSupportOfflineReq {}
+message PushNotificationThankReq { string event_id = 1; }
+
+///////////////////////////////////////// RESPONSE ////////////////////////////////////////////////
+
+message GetTicketSeatIdByOrderIdRes { repeated string seat_ids = 1; }

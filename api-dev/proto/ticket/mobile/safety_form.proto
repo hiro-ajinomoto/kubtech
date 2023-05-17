@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package ticket.mobile;
+option  go_package = "./mobile;mobile";
+
+import "ticket/mobile/base.proto";
+
+service SafetyFormService {
+  rpc DeclareSafetyForm(DeclareSafetyFormReq) returns (Empty);
+  rpc GetSafetyFormDetail(GetSafetyFormDetailReq) returns (GetSafetyFormDetailRes);
+}
+
+//================================== TYPE ====================================
+
+message SafetyFormInfo {
+  string                 id               = 1;
+  string                 ticket_id        = 2;
+  string                 user_id          = 3;
+  bool                   is_unsafe        = 4;
+  bool                   is_symptomatic   = 5;
+  bool                   is_injected      = 6;
+  repeated InjectionInfo injections       = 7;
+  repeated string        attachments      = 8;
+  SafetyFormUserInfo     user_info        = 9;
+  string                 declared_at      = 10;
+  FactorTestInfo         factor_test      = 11;
+  uint32                 injection_number = 12;
+  string                 partnership_id   = 13;
+}
+
+message InjectionInfo {
+  string injected_at        = 1;
+  string vaccine_type       = 2;
+  string other_vaccine_type = 3;
+}
+
+message SafetyFormUserInfo {
+  string user_full_name = 1;
+  string contact        = 2;
+  string company_name   = 3;
+}
+
+message FactorTestInfo {
+  string test_date   = 1;
+  bool   is_positive = 2;
+}
+
+//================================= REQUESTS ===================================
+
+message DeclareSafetyFormReq {
+  string                 ticket_id        = 1;
+  bool                   is_unsafe        = 2;
+  bool                   is_symptomatic   = 3;
+  bool                   is_injected      = 4;
+  repeated InjectionInfo injections       = 5;
+  repeated string        attachments      = 6;
+  SafetyFormUserInfo     user_info        = 7;
+  FactorTestInfo         factor_test      = 8;
+  uint32                 injection_number = 9;
+  string                 partnership_id   = 10;
+}
+
+message GetSafetyFormDetailReq { string ticket_id = 1; }
+
+//================================= RESPONSE ===================================
+
+message DeclareSafetyFormRes { SafetyFormInfo info = 1; }
+
+message GetSafetyFormDetailRes { SafetyFormInfo info = 1; }

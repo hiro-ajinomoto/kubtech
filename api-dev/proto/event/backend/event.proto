@@ -1,0 +1,189 @@
+syntax = "proto3";
+
+package event.backend;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/backend;backend";
+
+import "base/base.proto";
+import "event/enum/event_state.proto";
+// import "event/backend/base.proto";
+
+service EventService {
+  rpc SearchEventsByName(SearchEventsByNameReq) returns (SearchEventsByNameRes);
+  rpc RetrieveSimpleEvent(RetrieveSimpleEventReq) returns (RetrieveSimpleEventRes);
+  rpc AggregateEvent(RetrieveSimpleEventReq) returns (base.Empty);
+  rpc GetProductEventsInfo(GetProductEventsInfoReq) returns (GetProductEventsInfoRes);
+  rpc InternalListScheduleByEventID(ListScheduleByEventIDReq) returns (ListScheduleByEventIDRes);
+  rpc InternalUpdateEventState(InternalUpdateEventStateReq) returns (base.Empty);
+}
+
+//================================= BASIC ===================================
+enum EventForm {
+  EVENT_FORM_INVALID = 0;
+  EVENT_FORM_OFFLINE = 1;
+  EVENT_FORM_ONLINE  = 2;
+}
+
+message EventBasicInfo {
+  string                 name                = 1;
+  string                 code                = 2;
+  repeated string        event_image_urls    = 3;
+  repeated EventArtist   artists             = 4;
+  repeated string        hash_tags           = 5;
+  repeated string        programs_image_urls = 6;
+  string                 description         = 7;
+  repeated EventSchedule schedules           = 8;
+  bool                   is_hot              = 9;
+  bool                   is_public           = 11;
+  int64                  duration            = 12;
+  int64                  number_of_tickets   = 16;
+  double                 min_ticket_price    = 17;
+  double                 max_ticket_price    = 18;
+  EventCurrencyInfo      currency            = 19;
+  EventLocation          location            = 20;
+  repeated EventSponsor  sponsors            = 21;
+}
+
+message EventSimpleInfo {
+  string               name                = 1;
+  string               code                = 2;
+  repeated string      event_image_urls    = 3;
+  repeated EventArtist artists             = 4;
+  repeated string      hash_tags           = 5;
+  repeated string      programs_image_urls = 6;
+  string               description         = 7;
+}
+
+message EventCurrencyInfo {
+  string id   = 1;
+  string name = 2;
+  string code = 3;
+  string icon = 4;
+}
+
+message EventLocation {
+  string id       = 1;
+  string address  = 2;
+  string ward     = 3;
+  string district = 4;
+  string city     = 5;
+  string country  = 6;
+  string name     = 7;
+}
+
+message EventSeatMaps {
+  string id          = 1;
+  string name        = 2;
+  string map_picture = 3;
+}
+
+message EventSponsor {
+  string                id     = 1;
+  string                name   = 2;
+  string                avatar = 3;
+  EventSponsorLevelInfo level  = 4;
+}
+
+message EventSponsorLevelInfo {
+  string id   = 1;
+  string name = 2;
+  string icon = 3;
+}
+
+message EventSchedule {
+  string                 id                 = 1;
+  repeated EventSeatMaps general_seat_maps  = 2;
+  int64                  start_time         = 3;
+  int64                  end_time           = 4;
+  int64                  booking_start_time = 5;
+  int64                  booking_end_time   = 6;
+  int64                  checkin_start_time = 7;
+  int64                  checkin_end_time   = 8;
+  string                 timezone           = 9;
+  bool                   is_soldout         = 10;
+  bool                   is_public          = 11;
+  EventForm              event_type         = 12;
+  string                 name               = 13;
+}
+
+message EventArtist {
+  string                       id     = 1;
+  string                       name   = 2;
+  string                       avatar = 3;
+  repeated EventArtistTypeInfo type   = 4;
+  string                       intro  = 5;
+}
+
+message EventArtistTypeInfo {
+  string id   = 1;
+  string name = 2;
+  string icon = 3;
+}
+
+message ProductEventInfo {
+  string event_id = 1;
+  string address  = 2;
+  string name     = 3;
+  string timezone = 4;
+}
+
+message ProductEventScheduleInfo {
+  int64  start_time          = 1;
+  int64  end_time            = 2;
+  int64  check_in_start_time = 3;
+  string schedule_id         = 4;
+}
+
+message ProductEventSeatBlockInfo {
+  string seat_block_id   = 1;
+  string seat_block_name = 2;
+}
+
+message ProductEventSeatInfo {
+  string seat_id   = 1;
+  string seat_name = 2;
+}
+
+message SearchProductEventSeatMap {
+  string          seat_map_id    = 1;
+  repeated string seat_block_ids = 2;
+  repeated string seat_ids       = 3;
+}
+
+message SearchProductEventSchedule {
+  string                             schedule_id = 1;
+  repeated SearchProductEventSeatMap seat_maps   = 2;
+}
+
+//================================= REQUESTS ===================================
+
+message RetrieveSimpleEventReq { string id = 1; }
+message SearchEventsByNameReq { string search = 1; }
+
+message GetProductEventsInfoReq {
+  repeated string                     event_ids = 1;
+  repeated SearchProductEventSchedule schedules = 2;
+}
+
+//================================= RESPONSES ==================================
+
+message RetrieveSimpleEventRes { EventSimpleInfo info = 1; }
+message SearchEventsByNameRes { repeated string event_ids = 1; }
+message GetProductEventsInfoRes {
+  repeated ProductEventInfo          events      = 1;
+  repeated ProductEventScheduleInfo  schedules   = 2;
+  repeated ProductEventSeatBlockInfo seat_blocks = 3;
+  repeated ProductEventSeatInfo      seats       = 4;
+}
+
+message ListScheduleByEventIDReq { string id = 1; }
+
+message ListScheduleByEventIDRes { repeated EventSchedule items = 1; }
+
+message InternalUpdateEventStateReq {
+  string id = 1;
+  event.enum
+  .EventState state             = 2;
+  string      state_description = 3;
+  bool        is_publish        = 4;
+  string      user_id           = 5;
+}

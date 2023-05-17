@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package event.web_admin;
+option  go_package = "gitlab.bcasia.io/thuynga/apps/api/gen/go/event/web_admin;web_admin";
+
+import "event/web_admin/base.proto";
+
+service ArtistService {
+  rpc GetArtistDetail(GetArtistDetailReq) returns (GetArtistDetailRes);
+  rpc ListArtist(ListArtistReq) returns (ListArtistRes);
+  rpc CreateArtist(CreateArtistReq) returns (CreateArtistRes);
+  rpc UpdateArtist(UpdateArtistReq) returns (Empty);
+  rpc DeleteArtist(DeleteArtistReq) returns (Empty);
+}
+
+//================================= TYPES ===================================
+
+message ArtistBasicInfo {
+  string                  name          = 1;
+  string                  avatar        = 2;
+  repeated ArtistTypeInfo type          = 3;
+  string                  personal_url  = 4;
+  string                  facebook_url  = 5;
+  string                  instagram_url = 6;
+  string                  intro         = 7;
+}
+
+message ArtistListInfo {
+  string                  id         = 1;
+  string                  name       = 2;
+  string                  avatar     = 3;
+  repeated ArtistTypeInfo type       = 4;
+  int64                   created_at = 5;
+  int64                   updated_at = 6;
+  string                  created_by = 7;
+  string                  updated_by = 8;
+  string                  intro      = 9;
+}
+
+message ArtistTypeInfo {
+  string id   = 1;
+  string name = 2;
+  string icon = 3;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateArtistReq {
+  string          name          = 1;
+  string          avatar        = 2;
+  repeated string type_ids      = 3;
+  string          personal_url  = 4;
+  string          facebook_url  = 5;
+  string          instagram_url = 6;
+  string          intro         = 7;
+  string          lang          = 8;
+}
+
+message UpdateArtistReq {
+  string          id            = 1;
+  string          name          = 2;
+  string          avatar        = 3;
+  repeated string type_ids      = 4;
+  string          personal_url  = 5;
+  string          facebook_url  = 6;
+  string          instagram_url = 7;
+  string          intro         = 8;
+  string          lang          = 9;
+}
+
+message DeleteArtistReq { string id = 1; }
+
+message ListArtistReq {
+  string               search_text = 1; // TODO: Vi và Toàn support
+  PaginationReq        pagination  = 2;
+  repeated OrderByItem order_by    = 3;
+}
+
+message GetArtistDetailReq { string id = 1; }
+
+//================================= RESPONSES ==================================
+
+message CreateArtistRes { string id = 1; }
+
+message GetArtistDetailRes {
+  string          id             = 1;
+  string          partnership_id = 2;
+  ArtistBasicInfo info           = 3;
+  int64           created_at     = 4;
+  int64           updated_at     = 5;
+  string          created_by     = 6;
+  string          updated_by     = 7;
+}
+
+message ListArtistRes {
+  repeated ArtistListInfo info       = 1;
+  PaginationRes           pagination = 2;
+}

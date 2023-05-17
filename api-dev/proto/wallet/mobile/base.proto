@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package wallet.mobile;
+option  go_package = "./mobile;mobile";
+
+//================================= TYPES ===================================
+
+enum TransactionType {
+  TRANSACTION_TYPE_INVALID  = 0;
+  TRANSACTION_TYPE_TOP_UP   = 1;
+  TRANSACTION_TYPE_PAY      = 2;
+  TRANSACTION_TYPE_WITHDRAW = 3;
+}
+
+enum TransactionStatus {
+  TRANSACTION_STATUS_INVALID    = 0;
+  TRANSACTION_STATUS_PENDING    = 1;
+  TRANSACTION_STATUS_PROCESSING = 2;
+  TRANSACTION_STATUS_SUCCESSFUL = 3;
+  TRANSACTION_STATUS_FAILED     = 4;
+  TRANSACTION_STATUS_CANCELED   = 5;
+}
+
+message PaginationReq {
+  uint32 page_number = 1;
+  uint32 page_limit  = 2;
+}
+
+message PaginationRes {
+  uint32 page_current = 1;
+  uint32 page_limit   = 2;
+  uint32 total_page   = 3;
+  int64  total_record = 4;
+}
+
+message Empty {}
+
+message DefaultRes { bool result = 1; }

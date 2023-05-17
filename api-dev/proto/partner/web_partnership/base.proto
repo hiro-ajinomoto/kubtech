@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package partner.web_partnership;
+option  go_package = "./web_partnership;web_partnership";
+
+message Empty {}
+
+message PaginationReq {
+  uint32 page_number = 1;
+  uint32 page_limit  = 2;
+}
+
+message PaginationRes {
+  uint32 page_current = 1;
+  uint32 page_limit   = 2;
+  uint32 total_page   = 3;
+  int64  total_record = 4;
+}
+
+message OrderByItem {
+  bool   desc  = 1;
+  string field = 2;
+}
+
+message Coordinates {
+  double lat  = 1;
+  double long = 2;
+}

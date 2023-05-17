@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package customer;
+option  go_package = "./;customer";
+
+service CustomerService {
+  // User APIs.
+  rpc GetMe(GetMeReq) returns (GetMeRes);
+}
+
+//================================= TYPES ===================================
+
+enum Gender {
+  GENDER_INVALID = 0;
+  GENDER_MALE    = 1;
+  GENDER_FEMALE  = 2;
+  GENDER_OTHER   = 3;
+}
+
+enum SocialType {
+  SOCIAL_TYPE_INVALID  = 0;
+  SOCIAL_TYPE_FACEBOOK = 1;
+  SOCIAL_TYPE_GOOGLE   = 2;
+  SOCIAL_TYPE_APPLE    = 3;
+}
+
+message Location {
+  double lat  = 1;
+  double long = 2;
+}
+
+message UserInfo {
+  string     id                  = 1;
+  int64      created_at          = 2;
+  int64      updated_at          = 3;
+  string     email               = 4;
+  string     password            = 5;
+  string     name                = 6;
+  bool       phone_verified      = 7;
+  bool       is_enabled          = 8;
+  bool       email_verified      = 9;
+  bool       is_official_account = 10;
+  string     phone_number        = 11;
+  string     phone_code          = 12;
+  string     profile_picture     = 13;
+  string     addr                = 14;
+  string     city                = 15;
+  string     district            = 16;
+  string     ward                = 17;
+  Location   location            = 18;
+  string     description         = 19;
+  string     inviter_id          = 20;
+  int64      birthday            = 21;
+  Gender     gender              = 22;
+  string     partnership_id      = 23;
+  bool       is_social_account   = 24;
+  SocialType social_type         = 25;
+}
+
+message UserSimpleInfo {
+  string id              = 1;
+  string name            = 2;
+  string profile_picture = 3;
+  string phone_number    = 4;
+  string phone_code      = 5;
+  int64  birthday        = 6;
+  Gender gender          = 7;
+  string partnership_id  = 8;
+}
+
+
+message GetMeReq {}
+
+message GetMeRes { UserInfo user_info = 1; }

@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package partnership;
+option  go_package = "./;partnership";
+
+import "proto/partnership/base.proto";
+
+service NewsService {
+  rpc CreateNews(CreateNewsReq) returns (CreateNewsRes);
+  rpc UpdateNews(UpdateNewsReq) returns (Empty);
+  rpc DeleteNews(DeleteNewsReq) returns (Empty);
+  rpc RetrieveNews(RetrieveNewsReq) returns (RetrieveNewsRes);
+  rpc ListNews(ListNewsReq) returns (ListNewsRes);
+
+  rpc PublicRetrieveNews(PublicRetrieveNewsReq) returns (RetrieveNewsRes);
+  rpc PublicListNews(PublicListNewsReq) returns (PublicListNewsRes);
+}
+
+//================================= TYPES ===================================
+
+enum ContentType {
+  CONTENT_TYPE_TEXT = 0;
+  CONTENT_TYPE_LINK = 1;
+}
+
+message NewsBasicInfo {
+  string         title  = 1;
+  repeated Media medias = 2;
+  string         slug   = 3;
+  string         intro  = 4;
+  string         detail = 5;
+  string         lang   = 6;
+  ContentType    type   = 7;
+}
+
+message NewstListInfo {
+  string         id         = 1;
+  string         title      = 2;
+  repeated Media medias     = 3;
+  string         slug       = 4;
+  string         intro      = 5;
+  string         lang       = 6;
+  int64          created_at = 7;
+  int64          updated_at = 8;
+  string         created_by = 9;
+  string         updated_by = 10;
+  ContentType    type       = 11;
+}
+
+//================================= REQUESTS ===================================
+
+message CreateNewsReq { NewsBasicInfo info = 1; }
+
+message UpdateNewsReq {
+  string        id   = 1;
+  NewsBasicInfo info = 2;
+}
+
+message DeleteNewsReq { string id = 1; }
+
+message ListNewsReq {
+  string               search_text = 1;
+  PaginationReq        pagination  = 2;
+  repeated OrderByItem order_by    = 3;
+}
+
+message RetrieveNewsReq { string id = 1; }
+
+//================================= PUBLIC REQUESTS ===================================
+
+message PublicRetrieveNewsReq {
+  string id             = 1;
+  string partnership_id = 2;
+}
+
+message PublicListNewsReq {
+  string               partnership_id = 1;
+  string               lang           = 2;
+  string               search_text    = 3; // TODO: Vi và Toàn support
+  PaginationReq        pagination     = 4;
+  repeated OrderByItem order_by       = 5;
+}
+
+//================================= RESPONSES ==================================
+
+message CreateNewsRes { string id = 1; }
+
+message RetrieveNewsRes {
+  string        id             = 1;
+  string        partnership_id = 2;
+  NewsBasicInfo info           = 3;
+  int64         created_at     = 4;
+  int64         updated_at     = 5;
+  string        created_by     = 6;
+  string        updated_by     = 7;
+}
+
+message ListNewsRes {
+  repeated NewstListInfo info       = 1;
+  PaginationRes          pagination = 2;
+}
+
+message PublicListNewsRes {
+  repeated NewstListInfo info       = 1;
+  PaginationRes          pagination = 2;
+}
