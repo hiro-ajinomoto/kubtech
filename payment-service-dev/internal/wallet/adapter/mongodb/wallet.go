@@ -20,6 +20,7 @@ type Wallet struct {
 	Balance       float64 `bson:"balance"`
 }
 
+// which implement DB interface
 func (r Repository) CreateWallet(ctx context.Context, w *domain.Wallet) (*domain.Wallet, error) {
 	ctx, span := tracing.StartSpanFromContext(ctx, "Repository.CreateWallet")
 	defer span.End()
@@ -63,6 +64,7 @@ func (r Repository) UpdateWallet(ctx context.Context, w *domain.Wallet) (*domain
 func (r Repository) GetOrCreateWalletByUserId(ctx context.Context, userId, partnershipId string) (*domain.Wallet, error) {
 	ctx, span := tracing.StartSpanFromContext(ctx, "Repository.GetOrCreateWalletByUserId")
 	defer span.End()
+
 	var wallet Wallet
 	filter := bson.M{
 		"user_id":        userId,
@@ -75,7 +77,7 @@ func (r Repository) GetOrCreateWalletByUserId(ctx context.Context, userId, partn
 
 	err := r.db.FindOne(ctx, walletCollectionName, &wallet, opts...)
 
-	if err == mongo.ErrNoDocuments {
+	if err == mongo.ErrNoDocuments { //???
 		newWallet, err := r.CreateWallet(ctx, &domain.Wallet{
 			UserId:        userId,
 			PartnershipId: partnershipId,
@@ -118,12 +120,12 @@ func (r Repository) WalletSpending(ctx context.Context, userId, partnershipId st
 	ctx, span := tracing.StartSpanFromContext(ctx, "Repository.WalletSpending")
 	defer span.End()
 
-	w, err := r.GetOrCreateWalletByUserId(ctx, userId, partnershipId)
+	w, err := r.GetOrCreateWalletByUserId(ctx, userId, partnershipId) // lấy wallet bằng userId
 	if err != nil {
 		tracing.TraceErr(span, err)
 		return false, err
 	}
-	if w.Balance < amount {
+	if w.Balance < amount { // nếu tiền trong ví < tiền cần trả, log lõi tiền không đủ
 		return false, fmt.Errorf("INSUFFICIENT_FUNDS")
 	}
 	filter := bson.M{
@@ -134,11 +136,11 @@ func (r Repository) WalletSpending(ctx context.Context, userId, partnershipId st
 		},
 	}
 	update := bson.M{
-		"balance": w.Balance - amount,
+		"balance": w.Balance - amount, // cập nhật lại tiền trong ví
 	}
 
 	var wallet Wallet
-	err = r.db.FindOneAndUpdate(
+	err = r.db.FindOneAndUpdate( // thao tác trên db
 		ctx,
 		walletCollectionName,
 		filter,
@@ -148,6 +150,7 @@ func (r Repository) WalletSpending(ctx context.Context, userId, partnershipId st
 		},
 		&wallet,
 	)
+	// lõi thì tracing và log lỗi không đủ tiền thừa
 	if err != nil {
 		tracing.TraceErr(span, err)
 		logger.Error(err)
@@ -156,7 +159,7 @@ func (r Repository) WalletSpending(ctx context.Context, userId, partnershipId st
 		}
 		return false, err
 	}
-	logger.Infof("User %s spent %f points", userId, amount)
+	logger.Infof("User %s spent %f points", userId, amount) // log  lỗi user đã sủ dụng điểm
 	return true, nil
 
 }
@@ -177,7 +180,7 @@ func (r Repository) GetWalletBalanceByUserId(ctx context.Context, userId, partne
 
 	err := r.db.FindOne(ctx, walletCollectionName, &wallet, opts...)
 
-	if err == mongo.ErrNoDocuments {
+	if err == mongo.ErrNoDocuments { // if user has no wallet, create new wallet
 		newWallet, err := r.CreateWallet(ctx, &domain.Wallet{
 			UserId:        userId,
 			PartnershipId: partnershipId,

@@ -74,8 +74,8 @@ func main() {
 	grpcWalletSv, httpSvWallet, walletConsumer := wallet.New(cfg, dbWallet, mqWallet)
 
 	// Start consuming event messages.
-	paymentConsumer.Run()
-	walletConsumer.Run()
+	paymentConsumer.Run() //?
+	walletConsumer.Run()  //?
 
 	go func() {
 		// Start HTTP server.

@@ -10,19 +10,26 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-func (s MobileServer) TopUp(ctx context.Context, req *pb.TopUpReq) (*pb.TopUpRes, error) {
+// BUSSINESS LOGIC
 
-	md, ok := metadata.FromIncomingContext(ctx)
+func (s MobileServer) TopUp(ctx context.Context, req *pb.TopUpReq) (*pb.TopUpRes, error) {
+	// make trả về type giống với argument được truyền vào và sức chứa của nó
+	// New trả về type MD với key của md đều được lower key
+	// fromComingContext: trả về 1 MD
+	// ctx.value mục đích của cái này?
+
+	md, ok := metadata.FromIncomingContext(ctx) // cũng trả về 1 md với lower case
 	if len(md["token"]) <= 0 {
 		return nil, domain.ErrUnauthorized
 
 	}
-	userContext, ok := auth.GetContextUser(ctx)
+
+	userContext, ok := auth.GetContextUser(ctx) //??
 	if !ok {
 		return nil, domain.ErrUnauthorized
 	}
-	userToken := md["token"][0]
-	userLang := auth.GetLangFromContext(ctx)
+	userToken := md["token"][0]              //?
+	userLang := auth.GetLangFromContext(ctx) //???
 
 	cmd := command.TopUp{
 		UserID:            userContext.Id,
@@ -37,6 +44,7 @@ func (s MobileServer) TopUp(ctx context.Context, req *pb.TopUpReq) (*pb.TopUpRes
 		return nil, domain.ErrInvalidTopUpAmount
 	}
 
+	// QUERY COMMAND LOGIC
 	paymentData, transaction, err := s.app.Commands.TopUp.Handle(ctx, cmd)
 
 	if err != nil {

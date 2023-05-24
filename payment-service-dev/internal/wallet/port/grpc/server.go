@@ -6,7 +6,7 @@ import (
 	"gitlab.bcasia.io/thuynga/apps/payment-service/internal/wallet/port/grpc/mobile"
 )
 
-type Server struct {
+type Server struct { // cái này không có server của backend
 	*mobile.MobileServer
 	*backend.BackendServer
 }

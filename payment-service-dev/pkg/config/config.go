@@ -14,7 +14,7 @@ import (
 	"gitlab.bcasia.io/thuynga/apps/common/errors"
 )
 
-type Schema struct {
+type Schema struct { // ???
 	Env      string `json:"env"`
 	Port     string `json:"port"`
 	HTTPPort string `json:"http_port"`
@@ -153,7 +153,9 @@ func New() (*Schema, error) {
 
 func (Schema) PointFromCurrency(amount float64, currencyCode string) (float64, error) {
 
-	toBaseRate, isOk := exchangeRateCurrencyToBase[strings.ToLower(currencyCode)]
+	toBaseRate, isOk := exchangeRateCurrencyToBase[strings.ToLower(currencyCode)] // check if the currencyCode exists , turn currencyCode into lowercase
+	//lấy được tỉ lệ tương ứng ở đơn vị gốc (vnd)
+
 	if !isOk {
 		return 0, errors.New(errors.BadRequest, "UNSUPPORTED_CURRENCY")
 	}
@@ -172,18 +174,26 @@ func (Schema) ExchangeCurrency(amount float64, fromCurrency, toCurrency string) 
 	if fromCurrency == toCurrency {
 		return amount, nil
 	}
-
+	// baseRate = for example: 24000
 	fromBaseRate, isOk := exchangeRateCurrencyToBase[fromCurrency]
+	// lấy giá trị base trước (float)
 	if !isOk {
 		return 0, errors.New(errors.BadRequest, "UNSUPPORTED_CURRENCY")
 	}
+	// lấy tỉ giá tiền cần chuyển đổi
 	toRate, isOk := exchangeRateCurrencyToBase[toCurrency]
 	if !isOk {
 		return 0, errors.New(errors.BadRequest, "UNSUPPORTED_CURRENCY")
 	}
 
-	// convert currency to base
-	amountInBase := amount * fromBaseRate
+	// vnd = 1
+	// aus = 16000
+	// usd = 24000
 
+	// convert currency to base
+	// chuyển đổi về đơn vị base
+	amountInBase := amount * fromBaseRate //
+
+	// chuyển đổi về đơn vị to (chia cho to)
 	return math.Ceil((amountInBase/toRate)*100) / 100, nil
 }

@@ -12,6 +12,7 @@ import (
 func (s *MobileServer) GetPaymentMethods(ctx context.Context, req *pb.GetPaymentMethodsReq) (*pb.GetPaymentMethodsRes, error) {
 
 	usrContext, ok := auth.GetContextUser(ctx)
+	// PartnershipId cái này được truyền vào request hay sao?
 	if !ok {
 		return nil, errors.ErrInvalidToken
 	}

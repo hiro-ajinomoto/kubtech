@@ -14,17 +14,18 @@ type TransactionLog struct {
 	Changes       interface{}                 `bson:"changes"`
 }
 
+// adapter transaction log
 func (r Repository) CreateTransactionLog(ctx context.Context, t *domain.TransactionLog) (*domain.TransactionLog, error) {
 	ctx, span := tracing.StartSpanFromContext(ctx, "Repository.CreateTransactionLog")
 	defer span.End()
 
-	transactionLog := FromTransactionLogDomain(t)
-	transactionLog.BeforeCreate()
+	transactionLog := FromTransactionLogDomain(t) // chuyển domain.TransactionLog thành adapter transaction log
+	transactionLog.BeforeCreate()                 // set up linh tinh
 
-	err := r.db.Insert(ctx, transactionLogCollectionName, transactionLog)
-	if err != nil {
+	err := r.db.Insert(ctx, transactionLogCollectionName, transactionLog) //tạo 1 document transactionLog trên database
+	if err != nil {                                                       // có lỗi truy vết return nil
 		tracing.TraceErr(span, err)
 		return nil, err
 	}
-	return ToTransactionLogDomain(transactionLog), nil
+	return ToTransactionLogDomain(transactionLog), nil // không có lỗi trả về lại domain.transactionLog
 }

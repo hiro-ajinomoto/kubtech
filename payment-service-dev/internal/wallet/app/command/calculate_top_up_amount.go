@@ -22,9 +22,10 @@ type CalculateTopUpAmount struct {
 type CalculateTopUpAmountHandler struct {
 	cfg        *config.Schema
 	repo       CalculateTopUpAmountRepo
-	paymentSvc service.PaymentService
+	paymentSvc service.PaymentService // lúc start app, cfg, repo, paymentSvc sẽ được bơm vào đây, vốn đã implment từ repository db và paymentService
 }
 
+// bơm vào bằng thằng new này
 func NewCalculateTopUpAmountHandler(cfg *config.Schema, repo CalculateTopUpAmountRepo, paymentSvc service.PaymentService) CalculateTopUpAmountHandler {
 	if repo == nil {
 		panic("nil CalculateTopUpAmountRepo")
@@ -40,7 +41,7 @@ func (h *CalculateTopUpAmountHandler) Handle(ctx context.Context, cmd *Calculate
 	ctx, span := tracing.StartSpanFromContext(ctx, "CalculateTopUpAmountHandler.Handle")
 	defer span.End()
 
-	paymentMethod, err := h.paymentSvc.InternalGetPaymentMethodByCode(ctx, cmd.PaymentMethodCode, cmd.PartnershipID)
+	paymentMethod, err := h.paymentSvc.InternalGetPaymentMethodByCode(ctx, cmd.PaymentMethodCode, cmd.PartnershipID) // ???
 
 	if err != nil {
 		tracing.TraceErr(span, err)

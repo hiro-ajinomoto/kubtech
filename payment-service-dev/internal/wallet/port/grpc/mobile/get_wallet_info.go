@@ -14,25 +14,17 @@ func (s MobileServer) GetWalletInfo(ctx context.Context, req *pb.GetWalletInfoRe
 	usrContext, ok := auth.GetContextUser(ctx) // return user, boolean
 	//  Id            string      `json:"sub"`
 	// 	Name          string      `json:"name"`
-	// 	Email         string      `json:"email"`
-	// 	Token         string      `json:"token"`
-	// 	TokenId       string      `json:"id"`
-	// 	TokenIss      string      `json:"iss"`
-	// 	TokenExp      int64       `json:"exp"`
-	// 	IsAdmin       bool        `json:"admin"`
-	// 	PartnershipId string      `json:"partnership_id"`
-	// 	PartnerShopId string      `json:"partner_shop_id"`
-	// 	Role          domain.Role `json:"role"`
-	// }
-
+	// 	Email         string      `json:"email"
+	//etc...
 	if !ok {
 		return nil, errors.ErrInvalidToken
 	}
 
-	qr := query.GetWallet{
-		UserId: usrContext.Id,
+	qr := query.GetWallet{ // instance of GetWallet struct, query is just type
+		UserId: usrContext.Id, // which will be put in the the query logic
 	}
 
+	// get the wallet information
 	wallet, err := s.app.Queries.GetWalletInfo.Handle(ctx, qr)
 
 	if err != nil {

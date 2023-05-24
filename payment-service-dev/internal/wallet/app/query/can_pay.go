@@ -9,15 +9,15 @@ import (
 	"gitlab.bcasia.io/thuynga/apps/payment-service/pkg/config"
 )
 
-type CanPayRepo interface {
+type CanPayRepo interface { // what truly communicate with db
 	GetWalletBalanceByUserId(ctx context.Context, userId, partnershipId string) (float64, error)
 }
 
 type CanPay struct {
 	UserId        string
-	PartnershipId string
+	PartnershipId string //???
 	Amount        float64
-	CurrencyCode  string
+	CurrencyCode  string //??
 }
 
 type CanPayHandler struct {
@@ -39,17 +39,17 @@ func (h *CanPayHandler) Handle(ctx context.Context, query CanPay) (bool, error) 
 	ctx, span := tracing.StartSpanFromContext(ctx, "CanPayHandler.Handle")
 	defer span.End()
 
-	if query.Amount <= 0 {
+	if query.Amount <= 0 { // check in handlers
 		return false, domain.ErrInvalidPayAmount
 	}
 
-	payPointAmount, err := h.cfg.PointFromCurrency(query.Amount, query.CurrencyCode)
+	payPointAmount, err := h.cfg.PointFromCurrency(query.Amount, query.CurrencyCode) // ??
 	if err != nil {
 		logger.Error("Invalid exchange point 3, error: %v", err)
 		return false, domain.ErrUnsupportedCurrency
 	}
 
-	balance, err := h.repo.GetWalletBalanceByUserId(ctx, query.UserId, query.PartnershipId)
+	balance, err := h.repo.GetWalletBalanceByUserId(ctx, query.UserId, query.PartnershipId) //??
 
 	if err != nil {
 		tracing.TraceErr(span, err)

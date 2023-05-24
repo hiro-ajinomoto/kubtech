@@ -55,9 +55,9 @@ func (h *ExpireTransactionHandler) Handle(ctx context.Context) ([]*domain.Transa
 		logger.Info(transaction)
 		transactionLog, _ := domain.NewTransactionLog(transaction, nil)
 		oldTx := new(domain.Transaction)
-		helpers.DeepCopy(transaction, oldTx)
-		transaction.Failed(domain.TransactionFailureReasonExpired)
-		transaction, err = h.repo.UpdateTransaction(ctx, transaction)
+		helpers.DeepCopy(transaction, oldTx)                          // copy ra transaction
+		transaction.Failed(domain.TransactionFailureReasonExpired)    // cập nhật lại trạng thái
+		transaction, err = h.repo.UpdateTransaction(ctx, transaction) // cập nhật lại từng transaction hết hạn
 		if err != nil {
 			tracing.TraceErr(span, err)
 			logger.Errorf("Expire transaction error: %+v", err)

@@ -16,14 +16,15 @@ import (
 )
 
 func New(cfg *config.Schema, db commonMongoDB.DB, mqConnection cRabbitMQ.MQ) (*grpc.Server, *http.Server, *mq.Consumer) {
-	repo := mongodb.NewRepository(db)
+	repo := mongodb.NewRepository(db) // where to start // create instance của Repository struct{}
 	notificationSvc := notification.New(cfg, mqConnection)
 
 	paymentSvc := external.NewPaymentService(cfg)
-
+	// TẠO SERVICE TỪ EXTERNAL
+	// cài đặt khi khởi chạy application
 	application := app.Application{
 		Commands: app.Commands{
-			TopUp:                      command.NewTopUpHandler(cfg, repo, paymentSvc, notificationSvc),
+			TopUp:                      command.NewTopUpHandler(cfg, repo, paymentSvc, notificationSvc), // TRUYỀN VÀO TOPUPHANDLER
 			TopUpTransactionProcessing: command.NewTopUpProcessingHandler(cfg, repo, notificationSvc),
 			CalculateTopUpAmount:       command.NewCalculateTopUpAmountHandler(cfg, repo, paymentSvc),
 			Pay:                        command.NewPayHandler(cfg, repo),

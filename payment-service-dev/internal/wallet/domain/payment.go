@@ -35,17 +35,17 @@ const (
 type PaymentMethod struct {
 	Id            string
 	Name          string
-	Code          string
+	Code          string // what
 	Method        SupportedPaymentMethod
-	Fee           float64
-	AdditionalFee float64
-	DisplayFee    string
-	Icon          string
-	IncludeFee    bool
+	Fee           float64 // what
+	AdditionalFee float64 // what
+	DisplayFee    string  // what
+	Icon          string  // what
+	IncludeFee    bool    // what
 }
 
 type PaymentData struct {
-	WebviewUrl string              `json:"webview_url,omitempty"`
+	WebviewUrl string              `json:"webview_url,omitempty"` //wa
 	SDK        supportedPaymentSDK `json:"sdk,omitempty"`
 }
 
@@ -55,8 +55,8 @@ type PaymentCreator struct {
 }
 
 type Payoo struct {
-	OrderXml      string `json:"order_xml"`
-	OrderChecksum string `json:"order_checksum"`
+	OrderXml      string `json:"order_xml"`      //wa
+	OrderChecksum string `json:"order_checksum"` //wa
 }
 
 type supportedPaymentSDK struct {

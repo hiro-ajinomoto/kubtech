@@ -17,7 +17,7 @@ func (s *BackendServer) GetPaymentMethodByCode(ctx context.Context, req *pb.GetP
 
 	method, err := s.app.Queries.GetPaymentMethodByCode.Handle(ctx, qr)
 	if err != nil {
-		logger.Error(err)
+		logger.Error(err) //what
 		return nil, err
 	}
 

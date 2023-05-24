@@ -41,7 +41,7 @@ func (r Repository) ListPaymentMethods(ctx context.Context, partnershipId string
 			"partnership_id": partnershipId,
 			"is_enable":      true,
 		}),
-		mongodb.WithHint(IndexPaymentMethodPartnershipId),
+		mongodb.WithHint(IndexPaymentMethodPartnershipId), // có sử dụng index, theo partnershipId
 	)
 
 	if err != nil {
@@ -81,6 +81,8 @@ func (r Repository) GetPaymentMethodById(ctx context.Context, id, partnershipId 
 
 }
 
+// still work in repo
+// serviceInternaols still nee this to work
 func (r Repository) GetPaymentMethodByCode(ctx context.Context, code, partnershipId string) (*domain.PaymentMethodInfo, error) {
 	ctx, span := tracing.StartSpanFromContext(ctx, "Repository.GetPaymentMethodByCode")
 	defer span.End()
@@ -93,7 +95,7 @@ func (r Repository) GetPaymentMethodByCode(ctx context.Context, code, partnershi
 		&m,
 		mongodb.WithFilter(bson.M{
 			"partnership_id": partnershipId,
-			"code":           code,
+			"code":           code, //what
 		}),
 		mongodb.WithHint(IndexPaymentMethodPartnershipId),
 	)

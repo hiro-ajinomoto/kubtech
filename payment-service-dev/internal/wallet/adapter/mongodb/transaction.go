@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Transaction struct {
+type Transaction struct { // have base field -> this use to work with mongo database
 	Base          `bson:",inline,omitempty"`
 	UserId        string                   `bson:"user_id"`
 	PartnershipId string                   `bson:"partnership_id"`
@@ -49,15 +49,16 @@ func (r Repository) CreateTransaction(ctx context.Context, t *domain.Transaction
 	ctx, span := tracing.StartSpanFromContext(ctx, "Repository.CreateTransaction")
 	defer span.End()
 
-	transaction := FromTransactionDomain(t)
+	transaction := FromTransactionDomain(t) // transfer domainTransaction -> adapter Transaction
 	transaction.BeforeCreate()
 
-	err := r.db.Insert(ctx, transactionCollectionName, transaction)
-	if err != nil {
+	// NEED A DOMAIN TRANSACTION TO WORK WITH DATABASE
+	err := r.db.Insert(ctx, transactionCollectionName, transaction) // create document wiath adapter //transaction
+	if err != nil {                                                 // if err tracing,return nil
 		tracing.TraceErr(span, err)
 		return nil, err
 	}
-	return ToTransactionDomain(transaction), nil
+	return ToTransactionDomain(transaction), nil // return domaintransaction
 }
 
 func (r Repository) GetTransactionByTransactionId(ctx context.Context, transactionId string) (*domain.Transaction, error) {
@@ -93,19 +94,19 @@ func (r Repository) UpdateTransaction(ctx context.Context, t *domain.Transaction
 	ctx, span := tracing.StartSpanFromContext(ctx, "Repository.UpdateTransaction")
 	defer span.End()
 
-	transaction := FromTransactionDomain(t)
+	transaction := FromTransactionDomain(t) // chuyển đổi thành domain.transaction thành AdaptorTransaction
 
-	transaction.BeforeUpdate()
+	transaction.BeforeUpdate() // tạo vài thứ linh tih
 
 	filter := bson.M{
 		"transaction_id": transaction.TransactionId,
 	}
 
-	err := r.db.UpdateOne(
+	err := r.db.UpdateOne( // update lại document trên database
 		ctx,
 		transactionCollectionName,
-		filter,
-		transaction,
+		filter,      // update document nao
+		transaction, // update bang new transaction
 		&options.UpdateOptions{
 			Hint: IndexTransactionUserIdTransactionId,
 		})
@@ -113,7 +114,7 @@ func (r Repository) UpdateTransaction(ctx context.Context, t *domain.Transaction
 	if err != nil {
 		return nil, err
 	}
-	return ToTransactionDomain(transaction), nil
+	return ToTransactionDomain(transaction), nil // chuyển đổi về domain.trans
 }
 
 func (r Repository) GetExpiredTransactions(ctx context.Context, expireTime int64) ([]*domain.Transaction, error) {
@@ -159,11 +160,11 @@ func (r Repository) GetTransactionsByUserId(ctx context.Context, userId string, 
 		"user_id": userId,
 	}
 
-	opts := []mongodb.Option{
+	opts := []mongodb.Option{ // a little stuck here
 		mongodb.WithHint(IndexTransactionStatusCreatedAt),
 		mongodb.WithFilter(filter),
 	}
-	if dPaging != nil {
+	if dPaging != nil { // nếu có các phương thức hiển thị trang thì thêm vào trong options
 		opts = append(opts, mongodb.WithPaging(dPaging))
 	}
 

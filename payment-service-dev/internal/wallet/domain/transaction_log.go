@@ -13,13 +13,13 @@ const (
 	TransactionLogActionUpdate TransactionLogAction = "update"
 )
 
-type TransactionLog struct {
+type TransactionLog struct { // để làm việc với backend
 	Id             string
 	TransactionId  string
-	Action         TransactionLogAction
-	Changes        interface{}
-	CreatorInfo    *CreatorInfo
-	oldTransaction *Transaction
+	Action         TransactionLogAction // thuộc dạng transaction nào: thêm xóa sửa ... //cái sẽ khác transaction log
+	Changes        interface{}          // cái khác giữa 2 transactionLog
+	CreatorInfo    *CreatorInfo         // thông tin người tạo thực hiện transaction đó
+	oldTransaction *Transaction         // thông tin transaction cũ //  // cái khác giữa 2 transactionLog
 }
 
 type CreatorInfo struct {
@@ -44,13 +44,13 @@ func NewTransactionLog(
 		TransactionId: transaction.Id,
 		Action:        TransactionLogActionCreate,
 	}
-	cloneTx := new(Transaction)
-	err := helpers.DeepCopy(transaction, cloneTx)
-	if err == nil {
+	cloneTx := new(Transaction)                   // tạo clone ra để tránh bị tham chiếu về 1 transaction
+	err := helpers.DeepCopy(transaction, cloneTx) // check xem clone có giống với bản gốc không - giống tức là clone được rồi
+	if err == nil {                               // giống thì gán oldTransaction bằng bản clone
 		transactionLog.oldTransaction = cloneTx
 	}
 
-	if creator != nil {
+	if creator != nil { // nếu có creator thì set up vào trong transitionLog
 		transactionLog.CreatorInfo = creator
 	}
 

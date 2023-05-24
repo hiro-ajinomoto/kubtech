@@ -17,7 +17,7 @@ const (
 )
 
 type Repository struct {
-	db mongodb.DB
+	db mongodb.DB // type
 }
 
 func NewRepository(db mongodb.DB) *Repository {
@@ -25,37 +25,37 @@ func NewRepository(db mongodb.DB) *Repository {
 		panic("nil *mongo.Database")
 	}
 
-	err := db.EnsureIndexes(context.Background(), vnpayCollectionName, GetVNPayTxIndexes())
+	err := db.EnsureIndexes(context.Background(), vnpayCollectionName, GetVNPayTxIndexes()) //???
 	if err != nil {
 		panic(err)
 	}
 
-	err = db.EnsureIndexes(context.Background(), paypalCollectionName, GetPaypalTxIndexes())
+	err = db.EnsureIndexes(context.Background(), paypalCollectionName, GetPaypalTxIndexes()) ///???
 	if err != nil {
 		panic(err)
 	}
 
-	err = db.EnsureIndexes(context.Background(), tixlabsCollectionName, GetTixlabsTxIndexes())
+	err = db.EnsureIndexes(context.Background(), tixlabsCollectionName, GetTixlabsTxIndexes()) ///???
 	if err != nil {
 		panic(err)
 	}
 
-	err = db.EnsureIndexes(context.Background(), twoCheckoutCollectionName, GetTwoCheckoutTxIndexes())
+	err = db.EnsureIndexes(context.Background(), twoCheckoutCollectionName, GetTwoCheckoutTxIndexes()) ///???
 	if err != nil {
 		panic(err)
 	}
 
-	err = db.EnsureIndexes(context.Background(), payooCollectionName, GetPayooIndexes())
+	err = db.EnsureIndexes(context.Background(), payooCollectionName, GetPayooIndexes()) ///???
 	if err != nil {
 		panic(err)
 	}
 
-	err = db.EnsureIndexes(context.Background(), onePayCollectionName, GetOnePayIndexes())
+	err = db.EnsureIndexes(context.Background(), onePayCollectionName, GetOnePayIndexes()) ///???
 	if err != nil {
 		panic(err)
 	}
 
-	err = db.EnsureIndexes(context.Background(), paymentMethodCollectionName, GetPaymentMethodIndexes())
+	err = db.EnsureIndexes(context.Background(), paymentMethodCollectionName, GetPaymentMethodIndexes()) ///???
 	if err != nil {
 		panic(err)
 	}

@@ -36,7 +36,8 @@ func (h GetPaymentMethodByIdHandler) Handle(ctx context.Context, query GetPaymen
 	defer span.End()
 
 	// method, err := h.repo.GetPaymentMethodById(ctx, query.MethodId, query.PartnershipId)
-	method, err := service.GetInternalService().GetPaymentMethodById(ctx, query.MethodId, query.PartnershipId)
+	// tại sao không dùng service.GetInternalService. repo
+	method, err := service.GetInternalService().GetPaymentMethodById(ctx, query.MethodId, query.PartnershipId) // ??? cấu trúc
 	if err != nil {
 		logger.Error("Failed to list payment methods: ", err)
 		return nil, err

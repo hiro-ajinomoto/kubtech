@@ -27,8 +27,9 @@ type paymentURL struct {
 	URL string `json:"url"`
 }
 
-type PaymentService struct {
-	cfg *config.Schema
+type PaymentService struct { //external Paymentservice (trùng tên trong service) implement từ Paymentservice
+	cfg *config.Schema //--> CÁI NÀY LÀ ADAPTER PHƯƠNG THỨC THÌ LẤY TỪ INTERNAL SERVICVE, BỌC SERVICE TỪ PAYMENT THÀNH 1 FIELD
+	/// HÌNH NHƯ KHÔNG ĐƯỢC BỌC LẠI, MÀ DÙNG THÀNG THẰNG SERVICE LUÔN
 }
 
 func NewPaymentService(cfg *config.Schema) *PaymentService {
@@ -37,6 +38,13 @@ func NewPaymentService(cfg *config.Schema) *PaymentService {
 	}
 }
 
+// TRONG EXTERNAL SERVICE NÀY MỚI LÀ THẰNG SỬ DỤNG PHƯƠNG THỨC NẰM NGOÀI
+
+// MẤU CHỐT LOGIC NẰM Ở 2 SERVICE KHÁC NHAU
+// EXTERNAL -> THỰC THI SERVICE CỦA WALLET
+// TRONG SERVICE CỦA WALLET SỬ DỤNG SERVICE CỦA PAYMENT
+
+// thằng con implement từ service (nhưng lại nằm trong external)
 func (s PaymentService) InternalGetPaymentMethodByCode(ctx context.Context, code, partnershipId string) (*domain.PaymentMethod, error) {
 	// conn, err := tracingGRPC.DialWithTrace(ctx, s.cfg.PaymentServiceEndpoint)
 	// if err != nil {
@@ -45,12 +53,16 @@ func (s PaymentService) InternalGetPaymentMethodByCode(ctx context.Context, code
 	// }
 	// defer conn.Close()
 
-	md := metadata.New(map[string]string{
+	md := metadata.New(map[string]string{ //create a new md, with an element token : key is token and value is Service
 		"token": s.cfg.InternalSecretToken,
 	})
-	newCtx := metadata.NewOutgoingContext(ctx, md)
+	newCtx := metadata.NewOutgoingContext(ctx, md) // return new context
 	// client := paymentPb.NewPaymentServiceClient(conn)
-	res, err := paymentSrv.GetInternalService().GetPaymentMethodByCode(newCtx, code, partnershipId)
+
+	//đang dùng service của payment
+	// KHÔNG BỌC THẰNG SERVICE THÀNH 1 FIELD MÀ SỬ DỤNG TRỰC TIẾP NÓ LUÔN
+	res, err := paymentSrv.GetInternalService().GetPaymentMethodByCode(newCtx, code, partnershipId) //service from payment
+	// tại sao lại không .repo
 
 	if err != nil {
 		return nil, err
@@ -73,10 +85,10 @@ func (s PaymentService) GetPaymentData(ctx context.Context, paymentCreator domai
 	ctx, span := tracing.StartSpanFromContext(ctx, "PaymentService.GetPaymentData")
 	defer span.End()
 
-	paymentData := &domain.PaymentData{}
+	paymentData := &domain.PaymentData{} // tạo payment data rỗng
 
 	if s.isWebviewMethod(transaction.Metadata.TopUp.PaymentMethod) {
-		webviewUrl, err := s.getPaymentURL(ctx, paymentCreator, transaction)
+		webviewUrl, err := s.getPaymentURL(ctx, paymentCreator, transaction) // và set up các filed cho metadata đó
 		if err != nil {
 			tracing.TraceErr(span, err)
 			return nil, err
@@ -225,18 +237,23 @@ func (s *PaymentService) payooGenerateOrderInfo(ctx context.Context, paymentCrea
 
 }
 
+// quẻy trả về string là một dãy các số được mã hóa từ các param được lấy từ transaction và payment create
 func buildQuery(paymentCreator domain.PaymentCreator, transaction *domain.Transaction) string {
 	paymentAmount := transaction.Metadata.TopUp.TotalPrice
 
 	params := map[string]string{
 		"orderId":       transaction.Id,
-		"orderAmount":   fmt.Sprintf("%.2f", paymentAmount),
+		"orderAmount":   fmt.Sprintf("%.2f", paymentAmount), ///(chữ số thập phân được làm tròn đến 2 chữ số sau dấu phẩy
 		"orderDesc":     transaction.Description,
 		"orderCode":     transaction.Id,
 		"paymentMethod": transaction.Metadata.TopUp.PaymentMethod.Code,
 		"appLang":       paymentCreator.AppLang,
 		"serviceName":   domain.ServiceName,
 	}
+	// nếu chưa có payment method data và method trong là manual banktransfer hoặc  method là momo thì số lượng olà số lượng payment
+	// nếu A && B đúng thì không cần kiểm tra C -> chạy thẳng xử lý ngoặc
+	// nếu A & B sai thì kiêm tra C có đúng không
+	// nếu C đúng thì chạy vào trong ngoặc
 	if transaction.Metadata.TopUp.PaymentMethod != nil && (transaction.Metadata.TopUp.PaymentMethod.Method == domain.PaymentMethod_MANUAL_BANKTRANSFER ||
 		transaction.Metadata.TopUp.PaymentMethod.Method == domain.PaymentMethod_MOMO) {
 		params["orderAmount"] = fmt.Sprintf("%d", int(paymentAmount))

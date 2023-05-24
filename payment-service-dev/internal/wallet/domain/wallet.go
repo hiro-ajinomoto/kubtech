@@ -7,7 +7,7 @@ const (
 	DefaultFund = "WALLET"
 )
 
-type Wallet struct {
+type Wallet struct { // common struct should be return in all api
 	Id            string
 	UserId        string
 	PartnershipId string

@@ -32,12 +32,13 @@ func NewGetPaymentMethodByCodeHandler(repo GetPaymentMethodByCodeRepo) GetPaymen
 }
 
 func (h GetPaymentMethodByCodeHandler) Handle(ctx context.Context, query GetPaymentMethodByCode) (*domain.PaymentMethodInfo, error) {
-	ctx, span := tracing.StartSpanFromContext(ctx, "GetPaymentMethodByCodeHandler.Handle")
+	ctx, span := tracing.StartSpanFromContext(ctx, "GetPaymentMethodByCodeHandler.Handle") // what
 	defer span.End()
 
 	// method, err := h.repo.GetPaymentMethodByCode(ctx, query.Code, query.PartnershipId)
 
-	method, err := service.GetInternalService().GetPaymentMethodByCode(ctx, query.Code, query.PartnershipId)
+	// sử dụng trực tiếp từ chính service của nó
+	method, err := service.GetInternalService().GetPaymentMethodByCode(ctx, query.Code, query.PartnershipId) //???
 	if err != nil {
 		logger.Error("Failed to list payment methods: ", err)
 		return nil, err

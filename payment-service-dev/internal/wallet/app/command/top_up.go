@@ -20,10 +20,10 @@ type TopUpRepo interface {
 
 type TopUp struct {
 	UserID            string
-	PartnershipID     string
+	PartnershipID     string //?
 	Amount            float64
 	CurrencyCode      string
-	PaymentMethodCode string
+	PaymentMethodCode string //?
 	UserToken         string
 	AppLang           string
 }
@@ -31,7 +31,7 @@ type TopUp struct {
 type TopUpHandler struct {
 	cfg             *config.Schema
 	repo            TopUpRepo
-	paymentSvc      service.PaymentService
+	paymentSvc      service.PaymentService //VẪN LÀ TYPE CỦA WALLET SERVICE //  TRUYỀN EXTERNAL SERVICE (THỰC THI CỦA WALLET SERVICE) VÀO ĐÂY
 	notificationSvc service.NotificationService
 }
 
@@ -47,17 +47,19 @@ func NewTopUpHandler(
 	return TopUpHandler{
 		cfg:             cfg,
 		repo:            repo,
-		paymentSvc:      paymentSvc,
+		paymentSvc:      paymentSvc, //  TRUYỀN VÀO BẰNG EXTERNAL ERVICE (THỰC THI CỦA SERVICE)
 		notificationSvc: notificationSvc,
 	}
 }
 
+// QUERY COMMAND LOGIC
 func (h *TopUpHandler) Handle(ctx context.Context, cmd TopUp) (*domain.PaymentData, *domain.Transaction, error) {
 
 	ctx, span := tracing.StartSpanFromContext(ctx, "TopUpHandler.Handle")
 	defer span.End()
 
-	paymentMethod, err := h.paymentSvc.InternalGetPaymentMethodByCode(ctx, cmd.PaymentMethodCode, cmd.PartnershipID)
+	// EXTERNAL SERVICE ĐƯỢC TRUYỀN VÀO ĐÂY
+	paymentMethod, err := h.paymentSvc.InternalGetPaymentMethodByCode(ctx, cmd.PaymentMethodCode, cmd.PartnershipID) // ĐANG DÙNG CÁC PHƯƠNG THỨC ĐỊNHG NGHĨA TRONG INTERNAL SERVICE NHƯNG ĐƯỢC THỰC THI BẰNG EXTERNAL SERVICE
 	if err != nil {
 		tracing.TraceErr(span, err)
 		logger.Error(err)

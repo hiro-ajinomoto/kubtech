@@ -9,22 +9,24 @@ import (
 )
 
 func (s BackendServer) CanPay(ctx context.Context, req *pb.CanPayReq) (*pb.CanPayRes, error) {
+
 	qr := query.CanPay{
 		UserId:        req.UserId,
 		PartnershipId: req.PartnershipId,
 		Amount:        req.Amount,
-		CurrencyCode:  req.CurrencyCode,
+		CurrencyCode:  req.CurrencyCode, //??
 	}
 
 	if qr.CurrencyCode == "" {
 		return nil, domain.ErrUnsupportedCurrency
 	}
-	if qr.Amount <= 0 {
+
+	if qr.Amount <= 0 { // check in api
 		return nil, domain.ErrInvalidPayAmount
 	}
 
 	isOk, err := s.app.Queries.CanPay.Handle(ctx, qr)
-	// s là server {app: Application -> gồm 2 prototype Commands , Querys},  .Queries.CanPay => CanPay =>query.CanPayHandler
+
 	if err != nil {
 		return nil, err
 	}

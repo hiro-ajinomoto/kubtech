@@ -36,7 +36,7 @@ const (
 	TransactionFailureReasonPaymentGatewayFailed      string = "PAYMENT_GATEWAY_FAILED"
 )
 
-type Transaction struct {
+type Transaction struct { //domain.transactions
 	Id            string
 	UserId        string
 	PartnershipId string
@@ -45,7 +45,7 @@ type Transaction struct {
 	Description   string
 	Status        TransactionStatus
 	Type          TransactionType
-	Source        string
+	Source        string // what
 	CreatedAt     int64
 	Metadata      TransactionMetadata
 }
@@ -62,7 +62,7 @@ type TransactionMetadataTopUp struct {
 	CurrencyCode  string
 	Amount        float64
 	Fee           float64
-	TotalPrice    float64
+	TotalPrice    float64 //what
 }
 type TransactionMetadataPay struct {
 	ServiceName  string
@@ -78,13 +78,13 @@ func NewTopUpTransaction(
 	lastBalance float64,
 	currencyCode string,
 ) *Transaction {
-	newTxID := ksuid.New().String()
+	newTxID := ksuid.New().String() // tạo ra random ID cho transaction
 	transaction := Transaction{
 		Id:            newTxID,
 		Status:        TransactionStatusProcessing,
 		Type:          TransactionTypeTopUp,
 		UserId:        userID,
-		PartnershipId: partnershipID,
+		PartnershipId: partnershipID, // type of khách hàng
 		Amount:        amount,
 		Description:   newTxID,
 	}
@@ -107,25 +107,25 @@ func NewPayTransaction(
 	serviceRefId string,
 	lastBalance float64,
 	description string,
-) *Transaction {
+) *Transaction { // create new domain transaction
 
-	newTxId := ksuid.New().String()
+	newTxId := ksuid.New().String() // what make differ with other transaction
 	transaction := Transaction{
-		Id:            newTxId,
+		Id:            newTxId, // set up Id with  newTxId
 		UserId:        userId,
 		PartnershipId: partnershipId,
 		Status:        TransactionStatusProcessing,
 		Type:          TransactionTypePay,
-		Amount:        -amount,
-		Description:   newTxId,
+		Amount:        -amount, // why amount set negative??
+		Description:   newTxId, //// set up Id with  newTxId
 	}
 	pay := TransactionMetadataPay{
 		ServiceName:  serviceName,
 		ServiceRefId: serviceRefId,
 		Description:  description,
 	}
-	transaction.Metadata.LastBalance = lastBalance
-	transaction.Metadata.Pay = &pay
+	transaction.Metadata.LastBalance = lastBalance // set up a specific metadata
+	transaction.Metadata.Pay = &pay                //  set up a specific metadata
 	return &transaction
 }
 

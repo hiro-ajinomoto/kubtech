@@ -12,6 +12,7 @@ const (
 	transactionLogCollectionName string = "transaction_logs"
 )
 
+// lấy reported bọc lại thằng db
 type Repository struct {
 	db mongodb.DB
 }
@@ -20,7 +21,7 @@ func NewRepository(db mongodb.DB) *Repository {
 	if db == nil {
 		panic("nil *mongo.Database")
 	}
-
+	//???
 	err := db.EnsureIndexes(context.Background(), walletCollectionName, GetWalletIndexes())
 	if err != nil {
 		panic(err)

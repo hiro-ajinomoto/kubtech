@@ -8,6 +8,7 @@ import (
 	"gitlab.bcasia.io/thuynga/apps/payment-service/internal/payment/domain"
 )
 
+// cũng thực thi thằng  qq kia luôn =))
 func (s serviceHandler) GetPaymentMethodByCode(ctx context.Context, code, partnershipId string) (*domain.PaymentMethodInfo, error) {
 	ctx, span := tracing.StartSpanFromContext(ctx, "GetPaymentMethodByCodeHandler.Handle")
 	defer span.End()
